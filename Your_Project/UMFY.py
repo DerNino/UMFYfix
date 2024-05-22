@@ -6,7 +6,7 @@ import os
 from PIL import Image
 
 # Pfad zum Bild im selben Verzeichnis wie das Skript
-IMAGE_PATH = os.path.join(os.path.dirname(__file__), "UMFY Logo.png")
+IMAGE_PATH = os.path.join(os.path.dirname(__file__), "logo.png")
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -54,7 +54,15 @@ def save_response(response):
 try:
     img = Image.open(IMAGE_PATH)
     img = img.resize((img.width // 2, img.height // 2))  # Bild auf ein Viertel der ursprünglichen Größe reduzieren
-    st.image(img, use_column_width=False)
+    # Bild zentrieren
+    st.markdown(
+        f"""
+        <div style="display: flex; justify-content: center;">
+            <img src="data:image/png;base64,{img_to_bytes(img)}" width="{img.width}" height="{img.height}">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
 
@@ -88,3 +96,12 @@ if st.button("Antworten anzeigen"):
             st.write(f"{idx + 1}. {response}")
     else:
         st.write("Es gibt keine Antworten für heute.")
+
+# Funktion, um ein Bild in Base64 umzuwandeln
+def img_to_bytes(img):
+    from io import BytesIO
+    import base64
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode()
+    return img_str

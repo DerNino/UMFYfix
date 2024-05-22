@@ -3,9 +3,10 @@ import datetime
 import json
 from firebase_config import db
 import os
+from PIL import Image
 
-# Pfad zum hochgeladenen Bild
-IMAGE_PATH = '/mnt/data/logo.png'
+# Pfad zum Bild im selben Verzeichnis wie das Skript
+IMAGE_PATH = os.path.join(os.path.dirname(__file__), "logo.png")
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -49,7 +50,13 @@ def save_response(response):
         doc_ref.set({'responses': [response]})
 
 # Streamlit App
-st.image(IMAGE_PATH, use_column_width=True)  # Hinzufügen des hochgeladenen Logos
+# Bild laden und anzeigen
+try:
+    img = Image.open(IMAGE_PATH)
+    st.image(img, use_column_width=True)
+except Exception as e:
+    st.error(f"Fehler beim Laden des Bildes: {e}")
+
 st.title("Antworten App")
 
 question_of_the_day = get_question_of_the_day()

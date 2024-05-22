@@ -7,9 +7,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 import base64
-import schedule
-import time
-import threading
+import pytz
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -76,32 +74,10 @@ def get_question_of_the_day(date):
         return questions[question_index]  # Fragen täglich rotieren basierend auf dem Datum
     return "No questions available"
 
-# Funktion zum Speichern der Frage des Tages in Firebase
-def save_question_of_the_day():
-    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
-    question_of_the_day = get_question_of_the_day(datetime.date.today())
-    doc_ref = db.collection('responses').document(today_str)
-    
-    doc = doc_ref.get()
-    if not doc.exists:
-        doc_ref.set({'question': question_of_the_day, 'responses': []})
-
-# Planen der täglichen Frage
-def schedule_daily_question():
-    schedule.every().day.at("00:00").do(save_question_of_the_day)
-    
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-
-# Hintergrundthread für die Planung starten
-thread = threading.Thread(target=schedule_daily_question)
-thread.daemon = True
-thread.start()
-
 # Funktion zum Speichern von Antworten und der Frage in Firebase
 def save_response_and_question(name, response):
-    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+    tz = pytz.timezone('Europe/Berlin')  # Europäische Zeitzone
+    today_str = datetime.datetime.now(tz).strftime("%Y-%m-%d")
     question_of_the_day = get_question_of_the_day(datetime.date.today())
     doc_ref = db.collection('responses').document(today_str)
     response_data = {"name": name, "response": response}
@@ -118,6 +94,18 @@ def save_response_and_question(name, response):
         doc_ref.set(data)
     else:
         doc_ref.set({'question': question_of_the_day, 'responses': [response_data]})
+
+# Funktion zum Erstellen eines neuen Tages in Firebase
+def create_new_day_entry():
+    tz = pytz.timezone('Europe/Berlin')  # Europäische Zeitzone
+    today = datetime.datetime.now(tz).date()
+    today_str = today.strftime("%Y-%m-%d")
+    doc_ref = db.collection('responses').document(today_str)
+
+    doc = doc_ref.get()
+    if not doc.exists:
+        question_of_the_day = get_question_of_the_day(today)
+        doc_ref.set({'question': question_of_the_day, 'responses': []})
 
 # Streamlit App
 # Bild von GitHub herunterladen und anzeigen
@@ -145,6 +133,9 @@ except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
 
 st.title("Tägliche Umfrage")
+
+# Sicherstellen, dass ein neuer Tag in Firebase erstellt wird
+create_new_day_entry()
 
 # Frage des Tages basierend auf dem aktuellen Datum
 question_of_the_day = get_question_of_the_day(datetime.date.today())

@@ -1,12 +1,18 @@
 import streamlit as st
 import datetime
 import json
-import os
-from firebase_config import db
 import requests
 from PIL import Image
 from io import BytesIO
 import base64
+import os
+
+# Versuchen Sie, firebase_config zu importieren und behandeln Sie den Fehler, falls er auftritt
+try:
+    from firebase_config import db
+except ImportError as e:
+    st.error("Fehler beim Importieren von firebase_config. Stellen Sie sicher, dass die Datei korrekt eingerichtet ist.")
+    db = None
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -50,10 +56,10 @@ def load_questions():
     try:
         with open(file_path, 'r') as file:
             questions_data = json.load(file)
-            if isinstance(questions_data, dict) and "questions" in questions_data:
-                return questions_data["questions"]
+            if isinstance(questions_data, list):  # Überprüfen, ob die JSON-Datei eine Liste ist
+                return questions_data
             else:
-                st.error("Invalid JSON format: 'questions' key not found")
+                st.error("Invalid JSON format: Expected a list of questions")
                 return []
     except FileNotFoundError as e:
         st.error(f"Error: File not found: {e}")
@@ -66,38 +72,52 @@ def load_questions():
         return []
 
 # Funktion, um die Frage des Tages zu erhalten
-def get_question_of_the_day(date):
+def get_question_of_the_day():
     questions = load_questions()
     if questions:
-        question_index = date.toordinal() % len(questions)
-        return questions[question_index]  # Fragen täglich rotieren basierend auf dem Datum
+        today = datetime.date.today()
+        question_index = today.day % len(questions)
+        return questions[question_index]
     return "No questions available"
 
-# Funktion zum Speichern von Antworten und der Frage in Firebase
-def save_response_and_question(name, response):
-    now = datetime.datetime.now()
-    today_str = now.strftime("%Y-%m-%d")
-    question_of_the_day = get_question_of_the_day(now.date())
-    doc_ref = db.collection('responses').document(today_str)
-    doc = doc_ref.get()
-    response_data = {"name": name, "response": response}
-    if doc.exists:
-        data = doc.to_dict()
-        if 'responses' in data:
-            data['responses'].append(response_data)
+# Funktion zum Hinzufügen der Frage des Tages zur Firebase
+def add_question_of_the_day_to_responses(question):
+    if db:
+        today = datetime.date.today().strftime("%Y-%m-%d")
+        doc_ref = db.collection('responses').document(today)
+        doc = doc_ref.get()
+        if not doc.exists:
+            doc_ref.set({'question_of_the_day': question, 'responses': []})
         else:
-            data['responses'] = [response_data]
-        if 'question' not in data:
-            data['question'] = question_of_the_day
-        doc_ref.set(data)
+            data = doc.to_dict()
+            if 'question_of_the_day' not in data:
+                data['question_of_the_day'] = question
+                doc_ref.set(data, merge=True)
+
+# Funktion zum Speichern von Antworten in Firebase
+def save_response(name, response):
+    if db:
+        today = datetime.date.today().strftime("%Y-%m-%d")
+        doc_ref = db.collection('responses').document(today)
+        doc = doc_ref.get()
+        response_data = {"name": name, "response": response}
+        if doc.exists:
+            data = doc.to_dict()
+            if 'responses' in data:
+                data['responses'].append(response_data)
+            else:
+                data['responses'] = [response_data]
+            doc_ref.set(data)
+        else:
+            doc_ref.set({'responses': [response_data]})
     else:
-        doc_ref.set({'question': question_of_the_day, 'responses': [response_data]})
+        st.error("Firebase-Datenbank ist nicht konfiguriert.")
 
 # Streamlit App
 # Bild von GitHub herunterladen und anzeigen
 try:
     response = requests.get(logo_url)
-    response.raise_for_status()  # Check if the request was successful
+    response.raise_for_status()
     img = Image.open(BytesIO(response.content))
     # Bildgröße auf ein Viertel der ursprünglichen Größe reduzieren
     width, height = img.size
@@ -120,9 +140,11 @@ except Exception as e:
 
 st.title("Tägliche Umfrage")
 
-# Frage des Tages basierend auf dem aktuellen Datum
-question_of_the_day = get_question_of_the_day(datetime.date.today())
+question_of_the_day = get_question_of_the_day()
 st.write("Frage des Tages:", question_of_the_day)
+
+# Frage des Tages zur Firebase hinzufügen, falls noch nicht vorhanden
+add_question_of_the_day_to_responses(question_of_the_day)
 
 st.write("Bitte geben Sie Ihren Namen und Ihre Antwort ein:")
 user_name = st.text_input("Ihr Name")
@@ -131,38 +153,33 @@ user_response = st.text_area("Ihre Antwort")
 if st.button("Antwort senden"):
     if user_name and user_response:
         try:
-            save_response_and_question(user_name, user_response)
+            save_response(user_name, user_response)
             st.success("Ihre Antwort wurde gespeichert.")
         except Exception as e:
             st.error(f"Fehler beim Speichern der Antwort: {e}")
     else:
         st.error("Name und Antwortfeld dürfen nicht leer sein.")
 
-# Kalender zur Auswahl eines Datums
-selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
-
-# Anzeigen der gespeicherten Antworten und der Frage für das ausgewählte Datum
-if st.button("Antworten für diesen Tag anzeigen"):
-    selected_date_str = selected_date.strftime("%Y-%m-%d")
-    
-    doc_ref = db.collection('responses').document(selected_date_str)
-    doc = doc_ref.get()
-    if doc.exists:
-        data = doc.to_dict()
-        question_for_selected_date = data.get('question', 'Keine Frage gefunden')
-        
-        st.write(f"Frage für den {selected_date_str}: {question_for_selected_date}")
-        
-        if 'responses' in data:
-            st.write(f"Antworten vom {selected_date_str}:")
-            for idx, response in enumerate(data['responses']):
-                try:
-                    name = response.get('name', 'Unbekannt')
-                    answer = response.get('response', 'Keine Antwort')
-                    st.write(f"{idx + 1}. {name}: {answer}")
-                except KeyError as e:
-                    st.error(f"Fehler beim Abrufen der Antwort: {e}")
+# Anzeigen der gespeicherten Antworten
+if st.button("Antworten anzeigen"):
+    if db:
+        today = datetime.date.today().strftime("%Y-%m-%d")
+        doc_ref = db.collection('responses').document(today)
+        doc = doc_ref.get()
+        if doc.exists:
+            data = doc.to_dict()
+            if 'responses' in data:
+                st.write("Heutige Antworten:")
+                for idx, response in enumerate(data['responses']):
+                    try:
+                        name = response.get('name', 'Unbekannt')
+                        answer = response.get('response', 'Keine Antwort')
+                        st.write(f"{idx + 1}. {name}: {answer}")
+                    except KeyError as e:
+                        st.error(f"Fehler beim Abrufen der Antwort: {e}")
+            else:
+                st.write("Es gibt keine Antworten für heute.")
         else:
-            st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+            st.write("Es gibt keine Antworten für heute.")
     else:
-        st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+        st.error("Firebase-Datenbank ist nicht konfiguriert.")

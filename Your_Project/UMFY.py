@@ -31,8 +31,7 @@ h1, h2, h3, h4, h5, h6 {
 st.markdown(page_bg, unsafe_allow_html=True)
 
 # URL des Logos auf GitHub
-logo_url = "https://raw.githubusercontent.com/DerNino/UMFYfix/Your_Project
-/main/logo.png"
+logo_url = "https://github.com/DerNino/UMFYfix/blob/main/Your_Project/logo.png"
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():

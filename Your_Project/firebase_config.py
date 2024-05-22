@@ -17,6 +17,9 @@ firebase_config = {
     "client_x509_cert_url": st.secrets["firebase"]["client_x509_cert_url"],
 }
 
+# Debug: Print the firebase_config to verify
+st.write("Firebase config:", firebase_config)
+
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate(firebase_config)
 firebase_admin.initialize_app(cred)

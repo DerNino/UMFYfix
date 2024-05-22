@@ -1,22 +1,23 @@
 import streamlit as st
 import datetime
-import requests
+import json
 from firebase_config import db
 
-# Function to load questions from a JSON file on GitHub
+# Function to load questions from a local JSON file
 def load_questions():
-    url = "https://github.com/DerNino/UMFYfix/blob/main/Your_Project/fragen.json"
-    response = requests.get(url)
+    file_path = "path/to/your/fragen.json"  # Replace with the actual file path
     try:
-        response.raise_for_status()  # Check if the request was successful
-        questions = response.json()
-        return questions["questions"]
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching questions: {e}")
+        with open(file_path, 'r') as file:
+            questions = json.load(file)
+            return questions["questions"]
+    except FileNotFoundError as e:
+        st.error(f"Error: File not found: {e}")
         return []
-    except ValueError as e:  # This handles JSON decoding errors
+    except json.JSONDecodeError as e:
         st.error(f"Error decoding JSON: {e}")
-        st.write("Response content:", response.content)  # Debug: Print the response content
+        return []
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
         return []
 
 # Function to get the question of the day

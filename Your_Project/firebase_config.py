@@ -3,7 +3,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 if not firebase_admin._apps:
-    try:
+    try
 # Load Firebase credentials from Streamlit secrets
 firebase_config = {
     "type": st.secrets["firebase"]["type"],

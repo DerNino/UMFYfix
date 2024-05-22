@@ -50,10 +50,10 @@ def load_questions():
     try:
         with open(file_path, 'r') as file:
             questions_data = json.load(file)
-            if isinstance(questions_data, dict) and "questions" in questions_data:
-                return questions_data["questions"]
+            if isinstance(questions_data, list):
+                return questions_data
             else:
-                st.error("Invalid JSON format: 'questions' key not found")
+                st.error("Invalid JSON format: Expected a list of questions")
                 return []
     except FileNotFoundError as e:
         st.error(f"Error: File not found: {e}")
@@ -93,6 +93,16 @@ def save_response_and_question(name, response):
     else:
         doc_ref.set({'question': question_of_the_day, 'responses': [response_data]})
 
+# Funktion, um die Frage des Tages in Firebase zu speichern
+def save_daily_question():
+    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+    question_of_the_day = get_question_of_the_day(datetime.date.today())
+    doc_ref = db.collection('responses').document(today_str)
+    
+    doc = doc_ref.get()
+    if not doc.exists:
+        doc_ref.set({'question': question_of_the_day, 'responses': []})
+
 # Streamlit App
 # Bild von GitHub herunterladen und anzeigen
 try:
@@ -119,6 +129,9 @@ except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
 
 st.title("Tägliche Umfrage")
+
+# Speichern der Frage des Tages in Firebase
+save_daily_question()
 
 # Frage des Tages basierend auf dem aktuellen Datum
 question_of_the_day = get_question_of_the_day(datetime.date.today())

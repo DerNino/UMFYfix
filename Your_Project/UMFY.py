@@ -4,7 +4,7 @@ import json
 from firebase_config import db
 import os
 
-# Function to load questions from a local JSON file in the same repository
+# Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
     file_path = os.path.join(os.path.dirname(__file__), "fragen.json")
     try:
@@ -21,15 +21,15 @@ def load_questions():
         st.error(f"An error occurred: {e}")
         return []
 
-# Function to get the question of the day
+# Funktion, um die Frage des Tages zu erhalten
 def get_question_of_the_day():
     questions = load_questions()
     if questions:
         today = datetime.date.today()
-        return questions[today.day % len(questions)]  # Rotate questions daily
+        return questions[today.day % len(questions)]  # Fragen täglich rotieren
     return "No questions available"
 
-# Function to save responses in Firebase
+# Funktion zum Speichern von Antworten in Firebase
 def save_response(response):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
@@ -65,7 +65,7 @@ if st.button("Antworten anzeigen"):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
     doc = doc_ref.get()
-    if doc.exists:  # Use 'exists' as a property, not a method
+    if doc.exists:  # 'exists' als Eigenschaft verwenden, nicht als Methode
         data = doc.to_dict()
         st.write("Heutige Antworten:")
         for idx, response in enumerate(data['responses']):

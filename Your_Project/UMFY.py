@@ -19,6 +19,9 @@ div[data-testid="stText"] {
 div[data-testid="stMarkdownContainer"] p {
     color: white;
 }
+h1, h2, h3, h4, h5, h6 {
+    color: white;
+}
 </style>
 """
 
@@ -26,7 +29,7 @@ div[data-testid="stMarkdownContainer"] p {
 st.markdown(page_bg, unsafe_allow_html=True)
 
 # Pfad zum Bild im selben Verzeichnis wie das Skript
-IMAGE_PATH = os.path.join(os.path.dirname(__file__), "UMFY Logo.png")
+IMAGE_PATH = os.path.join(os.path.dirname(__file__), "logo.png")
 
 # Funktion, um ein Bild in Base64 umzuwandeln
 def img_to_bytes(img):
@@ -95,7 +98,7 @@ try:
 except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
 
-st.title("Antworten App")
+st.title("Tägliche Umfrage")
 
 question_of_the_day = get_question_of_the_day()
 st.write("Frage des Tages:", question_of_the_day)

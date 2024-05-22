@@ -1,45 +1,47 @@
 import streamlit as st
 import datetime
 import requests
-import json
 from firebase_config import db
 
-# Function to load questions from the GitHub file
-@st.cache_data
+# Function to load questions from an external source
 def load_questions():
-    url = "https://raw.githubusercontent.com/DerNino/your_project/main/Your_Project/fragen.json"
-    response = requests.get(url)
-    questions = response.json()["questions"]
-    return questions
+    response = requests.get("URL_TO_YOUR_QUESTIONS_ENDPOINT")
+    try:
+        response.raise_for_status()  # Check if the request was successful
+        questions = response.json()
+        st.write("Loaded questions:", questions)  # Debug: Print the loaded questions
+        return questions["questions"]
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching questions: {e}")
+        return []
+    except ValueError as e:  # This handles JSON decoding errors
+        st.error(f"Error decoding JSON: {e}")
+        st.write("Response content:", response.content)  # Debug: Print the response content
+        return []
 
 # Function to get the question of the day
 def get_question_of_the_day():
     questions = load_questions()
     today = datetime.date.today()
-    question_index = today.toordinal() % len(questions)
-    return questions[question_index]
+    return questions[today.day % len(questions)]  # Rotate questions daily
 
 # Function to save responses in Firebase
-def save_response(response, question):
+def save_response(response):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
     doc = doc_ref.get()
     if doc.exists:
         data = doc.to_dict()
-        if 'responses' in data:
-            data['responses'].append({"question": question, "response": response})
-        else:
-            data['responses'] = [{"question": question, "response": response}]
+        data['responses'].append(response)
         doc_ref.set(data)
     else:
-        doc_ref.set({'responses': [{"question": question, "response": response}]})
+        doc_ref.set({'responses': [response]})
 
 # Streamlit App
 st.title("Antworten App")
 
-# Get the question of the day
 question_of_the_day = get_question_of_the_day()
-st.write(f"Frage des Tages: {question_of_the_day}")
+st.write("Frage des Tages:", question_of_the_day)
 
 st.write("Bitte geben Sie Ihre Antwort ein:")
 user_response = st.text_area("Ihre Antwort")
@@ -47,7 +49,7 @@ user_response = st.text_area("Ihre Antwort")
 if st.button("Antwort senden"):
     if user_response:
         try:
-            save_response(user_response, question_of_the_day)
+            save_response(user_response)
             st.success("Ihre Antwort wurde gespeichert.")
         except Exception as e:
             st.error(f"Fehler beim Speichern der Antwort: {e}")
@@ -62,8 +64,8 @@ if st.button("Antworten anzeigen"):
     if doc.exists:
         data = doc.to_dict()
         st.write("Heutige Antworten:")
-        for idx, item in enumerate(data['responses']):
-            st.write(f"{idx + 1}. {item['response']} (Frage: {item['question']})")
+        for idx, response in enumerate(data['responses']):
+            st.write(f"{idx + 1}. {response}")
     else:
         st.write("Es gibt keine Antworten für heute.")
 

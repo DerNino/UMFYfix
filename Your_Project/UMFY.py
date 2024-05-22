@@ -25,6 +25,9 @@ h1, h2, h3, h4, h5, h6 {
 button, .stButton > button {
     color: black !important;
 }
+.stButton > button {
+    background-color: white;
+}
 </style>
 """
 

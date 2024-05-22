@@ -6,7 +6,7 @@ import os
 from PIL import Image
 
 # Pfad zum Bild im selben Verzeichnis wie das Skript
-IMAGE_PATH = os.path.join(os.path.dirname(__file__), "logo.png")
+IMAGE_PATH = os.path.join(os.path.dirname(__file__), "UMFY Logo.png")
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():

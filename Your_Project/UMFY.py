@@ -7,7 +7,7 @@ from PIL import Image
 import base64
 
 # Pfad zum Bild im selben Verzeichnis wie das Skript
-IMAGE_PATH = os.path.join(os.path.dirname(__file__), "logo.png")
+IMAGE_PATH = os.path.join(os.path.dirname(__file__), "UMFY Logo.png")
 
 # Funktion, um ein Bild in Base64 umzuwandeln
 def img_to_bytes(img):

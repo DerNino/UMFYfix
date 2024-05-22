@@ -1,6 +1,31 @@
 import streamlit as st
 import datetime
+import requests
 from firebase_config import db
+
+# Function to load questions from a JSON file on GitHub
+def load_questions():
+    url = "https://raw.githubusercontent.com/YourUsername/YourRepository/main/fragen.json"
+    response = requests.get(url)
+    try:
+        response.raise_for_status()  # Check if the request was successful
+        questions = response.json()
+        return questions["questions"]
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching questions: {e}")
+        return []
+    except ValueError as e:  # This handles JSON decoding errors
+        st.error(f"Error decoding JSON: {e}")
+        st.write("Response content:", response.content)  # Debug: Print the response content
+        return []
+
+# Function to get the question of the day
+def get_question_of_the_day():
+    questions = load_questions()
+    if questions:
+        today = datetime.date.today()
+        return questions[today.day % len(questions)]  # Rotate questions daily
+    return "No questions available"
 
 # Function to save responses in Firebase
 def save_response(response):
@@ -16,6 +41,9 @@ def save_response(response):
 
 # Streamlit App
 st.title("Antworten App")
+
+question_of_the_day = get_question_of_the_day()
+st.write("Frage des Tages:", question_of_the_day)
 
 st.write("Bitte geben Sie Ihre Antwort ein:")
 user_response = st.text_area("Ihre Antwort")

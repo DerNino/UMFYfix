@@ -6,7 +6,7 @@ Dieses Dokument fasst die wichtigsten Erkenntnisse und Lernerfahrungen zusammen,
 
 ### Herausforderungen
 - **Layout-Anpassungen:** Die Anpassung des Layouts an spezifische Bedürfnisse war manchmal schwierig, insbesondere wenn man komplexere Layouts umsetzen wollte.
-- **Performance:** Bei schwierigeren Codes hatte Streamlit zum Teil mühe und stürzte auch einigemale ab, wodurch wir den Code anpassen mussten meist auch um simplere Varianten zu finden.
+- **Performance:** Bei schwierigeren Codes hatte Streamlit zum Teil mühe und stürzte auch einige male ab, wodurch wir den Code anpassen mussten, meist auch um simplere Varianten zu finden.
 
 ## Einbindung der Firebase-Datenbank von Google
 

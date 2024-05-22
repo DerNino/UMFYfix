@@ -3,7 +3,6 @@ import datetime
 import json
 from firebase_config import db
 import requests
-import Pillow
 from PIL import Image
 from io import BytesIO
 

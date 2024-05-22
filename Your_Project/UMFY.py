@@ -66,11 +66,10 @@ def load_questions():
         return []
 
 # Funktion, um die Frage des Tages zu erhalten
-def get_question_of_the_day():
+def get_question_of_the_day(date):
     questions = load_questions()
     if questions:
-        today = datetime.date.today()
-        question_index = today.toordinal() % len(questions)
+        question_index = date.toordinal() % len(questions)
         return questions[question_index]  # Fragen täglich rotieren basierend auf dem Datum
     return "No questions available"
 
@@ -117,7 +116,8 @@ except Exception as e:
 
 st.title("Tägliche Umfrage")
 
-question_of_the_day = get_question_of_the_day()
+# Frage des Tages basierend auf dem aktuellen Datum
+question_of_the_day = get_question_of_the_day(datetime.date.today())
 st.write("Frage des Tages:", question_of_the_day)
 
 st.write("Bitte geben Sie Ihren Namen und Ihre Antwort ein:")
@@ -137,9 +137,13 @@ if st.button("Antwort senden"):
 # Kalender zur Auswahl eines Datums
 selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
 
-# Anzeigen der gespeicherten Antworten für das ausgewählte Datum
+# Anzeigen der gespeicherten Antworten und der Frage für das ausgewählte Datum
 if st.button("Antworten für diesen Tag anzeigen"):
     selected_date_str = selected_date.strftime("%Y-%m-%d")
+    question_for_selected_date = get_question_of_the_day(selected_date)
+    
+    st.write(f"Frage für den {selected_date_str}: {question_for_selected_date}")
+    
     doc_ref = db.collection('responses').document(selected_date_str)
     doc = doc_ref.get()
     if doc.exists:

@@ -27,4 +27,5 @@ Dieses Dokument fasst die wichtigsten Erkenntnisse und Lernerfahrungen zusammen,
 
 ## Fazit
 
-Die Entwicklung der UMFY-App war eine wertvolle Lernreise. Von der Nutzung moderner Frameworks und Tools bis hin zur Implementierung einer robusten Datenbanklösung und effektiven Deployment-Strategien haben wir viele wichtige Techniken und Best Practices kennengelernt. Diese Erfahrungen werden in zukünftigen Projekten von unschätzbarem Wert sein.
+Die Entwicklung der UMFY-App war eine wertvolle Lernreise. 
+

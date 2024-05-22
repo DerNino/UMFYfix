@@ -26,7 +26,7 @@ button, .stButton > button {
     color: black !important;
 }
 .stButton > button {
-    background-color: white;
+    background-color: black;
 }
 </style>
 """

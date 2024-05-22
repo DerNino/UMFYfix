@@ -73,10 +73,11 @@ def get_question_of_the_day(date):
         return questions[question_index]  # Fragen täglich rotieren basierend auf dem Datum
     return "No questions available"
 
-# Funktion zum Speichern von Antworten in Firebase
-def save_response(name, response):
+# Funktion zum Speichern von Antworten und der Frage in Firebase
+def save_response_and_question(name, response):
     now = datetime.datetime.now()
     today_str = now.strftime("%Y-%m-%d")
+    question_of_the_day = get_question_of_the_day(now.date())
     doc_ref = db.collection('responses').document(today_str)
     doc = doc_ref.get()
     response_data = {"name": name, "response": response}
@@ -86,9 +87,11 @@ def save_response(name, response):
             data['responses'].append(response_data)
         else:
             data['responses'] = [response_data]
+        if 'question' not in data:
+            data['question'] = question_of_the_day
         doc_ref.set(data)
     else:
-        doc_ref.set({'responses': [response_data]})
+        doc_ref.set({'question': question_of_the_day, 'responses': [response_data]})
 
 # Streamlit App
 # Bild von GitHub herunterladen und anzeigen
@@ -128,7 +131,7 @@ user_response = st.text_area("Ihre Antwort")
 if st.button("Antwort senden"):
     if user_name and user_response:
         try:
-            save_response(user_name, user_response)
+            save_response_and_question(user_name, user_response)
             st.success("Ihre Antwort wurde gespeichert.")
         except Exception as e:
             st.error(f"Fehler beim Speichern der Antwort: {e}")
@@ -141,14 +144,15 @@ selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today()
 # Anzeigen der gespeicherten Antworten und der Frage für das ausgewählte Datum
 if st.button("Antworten für diesen Tag anzeigen"):
     selected_date_str = selected_date.strftime("%Y-%m-%d")
-    question_for_selected_date = get_question_of_the_day(selected_date)
-    
-    st.write(f"Frage für den {selected_date_str}: {question_for_selected_date}")
     
     doc_ref = db.collection('responses').document(selected_date_str)
     doc = doc_ref.get()
     if doc.exists:
         data = doc.to_dict()
+        question_for_selected_date = data.get('question', 'Keine Frage gefunden')
+        
+        st.write(f"Frage für den {selected_date_str}: {question_for_selected_date}")
+        
         if 'responses' in data:
             st.write(f"Antworten vom {selected_date_str}:")
             for idx, response in enumerate(data['responses']):

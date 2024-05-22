@@ -7,7 +7,7 @@ def save_response(response):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
     doc = doc_ref.get()
-    if doc.exists:
+    if doc.exists():
         data = doc.to_dict()
         data['responses'].append(response)
         doc_ref.set(data)
@@ -32,7 +32,7 @@ if st.button("Antworten anzeigen"):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
     doc = doc_ref.get()
-    if doc.exists:
+    if doc.exists():
         data = doc.to_dict()
         st.write("Heutige Antworten:")
         for idx, response in enumerate(data['responses']):

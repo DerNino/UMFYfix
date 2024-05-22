@@ -32,8 +32,8 @@ h1, h2, h3, h4, h5, h6 {
 # Wende die CSS-Styles an
 st.markdown(page_bg, unsafe_allow_html=True)
 
-# Pfad zum Bild im selben Verzeichnis wie das Skript
-IMAGE_PATH = os.path.join(os.path.dirname(__file__), "logo.png")
+# URL des Logos auf GitHub
+logo_url = "https://raw.githubusercontent.com/IHR_GITHUB_BENUTZERNAME/IHR_REPOSITORY_NAME/BRANCH_NAME/logo.png"
 
 # Funktion, um ein Bild in Base64 umzuwandeln
 def img_to_bytes(img):
@@ -89,16 +89,12 @@ def save_response(name, response):
         doc_ref.set({'responses': [response_data]})
 
 # Streamlit App
-# Bild laden, Größe ändern und anzeigen
+# Bild von GitHub zentrieren und anzeigen
 try:
-    img = Image.open(IMAGE_PATH)
-    img = img.resize((img.width // 2, img.height // 2))  # Bild auf ein Viertel der ursprünglichen Größe reduzieren
-    img_str = img_to_bytes(img)
-    # Bild zentrieren
     st.markdown(
         f"""
         <div style="display: flex; justify-content: center;">
-            <img src="data:image/png;base64,{img_str}" width="{img.width}" height="{img.height}">
+            <img src="{logo_url}" width="200" height="200">
         </div>
         """,
         unsafe_allow_html=True

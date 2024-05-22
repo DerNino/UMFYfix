@@ -4,6 +4,9 @@ import json
 from firebase_config import db
 import os
 
+# GitHub-URL zum Logo
+LOGO_URL = 'https://raw.githubusercontent.com/DerNino/Your_Project/main/UMFY%20Logo.png'
+
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
     file_path = os.path.join(os.path.dirname(__file__), "fragen.json")
@@ -46,6 +49,7 @@ def save_response(response):
         doc_ref.set({'responses': [response]})
 
 # Streamlit App
+st.image(LOGO_URL, use_column_width=True)  # Hinzufügen des Logos
 st.title("Antworten App")
 
 question_of_the_day = get_question_of_the_day()

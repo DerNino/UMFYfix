@@ -7,7 +7,7 @@ from firebase_config import db
 # Function to load questions from the GitHub file
 @st.cache_data
 def load_questions():
-    url = "https://raw.githubusercontent.com/DerNino/your_project/main/fragen.json"
+    url = "https://raw.githubusercontent.com/DerNino/your_project/main/Your_Project/fragen.json"
     response = requests.get(url)
     questions = response.json()["questions"]
     return questions

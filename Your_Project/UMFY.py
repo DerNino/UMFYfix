@@ -33,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 st.markdown(page_bg, unsafe_allow_html=True)
 
 # URL des Logos auf GitHub
-logo_url = "https://raw.githubusercontent.com/DerNino/UMFYfix/main/Your_Project/logo.png"
+logo_url = "https://raw.githubusercontent.com/IHR_GITHUB_BENUTZERNAME/my_project/main/logo.png"
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -86,11 +86,30 @@ try:
     response = requests.get(logo_url)
     response.raise_for_status()  # Check if the request was successful
     img = Image.open(BytesIO(response.content))
-    st.image(img, use_column_width=True, caption="Logo")
+    # Bildgröße auf ein Viertel der ursprünglichen Größe reduzieren
+    width, height = img.size
+    img = img.resize((width // 2, height // 2))
+    # Bild in der Mitte anzeigen
+    st.markdown(
+        f"""
+        <div style="display: flex; justify-content: center;">
+            <img src="data:image/png;base64,{img_to_bytes(img)}" width="{width // 2}" height="{height // 2}">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 except requests.exceptions.RequestException as e:
     st.error(f"Fehler beim Herunterladen des Bildes: {e}")
 except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
+
+# Funktion, um ein Bild in Base64 umzuwandeln
+def img_to_bytes(img):
+    from io import BytesIO
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode()
+    return img_str
 
 st.title("Tägliche Umfrage")
 

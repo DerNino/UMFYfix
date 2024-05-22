@@ -3,6 +3,7 @@ import datetime
 import json
 from firebase_config import db
 import os
+import PIL
 from PIL import Image
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe

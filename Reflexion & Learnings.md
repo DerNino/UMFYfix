@@ -21,8 +21,6 @@ Dieses Dokument fasst die wichtigsten Erkenntnisse und Lernerfahrungen zusammen,
 
 ## Weitere Lernpunkte
 
-### State Management in React
-- **Konzept:** Die Notwendigkeit eines effizienten State Managements wurde deutlich, insbesondere bei der Handhabung von Benutzerinteraktionen und API-Antworten.
 
 ### Testing und Debugging
 - **Debugging:** Effektive Debugging-Techniken und -Tools, wie ChatGPT, waren unverzichtbar.

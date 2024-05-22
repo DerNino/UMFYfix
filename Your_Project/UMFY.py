@@ -5,7 +5,7 @@ from firebase_config import db
 
 # Function to load questions from an external source
 def load_questions():
-    response = requests.get("URL_TO_YOUR_QUESTIONS_ENDPOINT")
+    response = requests.get("https://github.com/DerNino/UMFYfix/blob/main/Your_Project/fragen.json")
     try:
         response.raise_for_status()  # Check if the request was successful
         questions = response.json()

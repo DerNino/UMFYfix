@@ -5,7 +5,7 @@ from firebase_config import db
 
 # Function to load questions from a local JSON file
 def load_questions():
-    file_path = "path/to/your/fragen.json"  # Replace with the actual file path
+    file_path = "Your_Project/fragen.json"  # Replace with the actual file path
     try:
         with open(file_path, 'r') as file:
             questions = json.load(file)

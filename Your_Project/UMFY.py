@@ -2,73 +2,63 @@ import streamlit as st
 import datetime
 import json
 from firebase_config import db
-import os
 
-# Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
-def load_questions():
-    file_path = os.path.join(os.path.dirname(__file__), "fragen.json")
-    try:
-        with open(file_path, 'r') as file:
-            questions = json.load(file)
-            return questions["questions"]
-    except FileNotFoundError as e:
-        st.error(f"Error: File not found: {e}")
-        return []
-    except json.JSONDecodeError as e:
-        st.error(f"Error decoding JSON: {e}")
-        return []
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
-        return []
-
-# Funktion, um die Frage des Tages zu erhalten
-def get_question_of_the_day():
-    questions = load_questions()
-    if questions:
-        today = datetime.date.today()
-        return questions[today.day % len(questions)]  # Fragen täglich rotieren
-    return "No questions available"
-
-# Funktion zum Speichern von Antworten in Firebase
-def save_response(response):
+# Function to save responses in Firebase
+def save_response(question, response):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
     doc = doc_ref.get()
     if doc.exists:
         data = doc.to_dict()
-        data['responses'].append(response)
+        if question in data['responses']:
+            data['responses'][question].append(response)
+        else:
+            data['responses'][question] = [response]
         doc_ref.set(data)
     else:
-        doc_ref.set({'responses': [response]})
+        doc_ref.set({'responses': {question: [response]}})
+
+# Load questions from fragen.json
+def load_questions():
+    with open('fragen.json', 'r') as file:
+        questions = json.load(file)
+    return questions
 
 # Streamlit App
 st.title("Antworten App")
 
-question_of_the_day = get_question_of_the_day()
-st.write("Frage des Tages:", question_of_the_day)
+st.write("Bitte beantworten Sie die folgenden Fragen:")
 
-st.write("Bitte geben Sie Ihre Antwort ein:")
-user_response = st.text_area("Ihre Antwort")
+questions = load_questions()
 
-if st.button("Antwort senden"):
-    if user_response:
+responses = {}
+for question in questions:
+    response = st.text_area(f"{question}", key=question)
+    responses[question] = response
+
+if st.button("Antworten senden"):
+    all_filled = all(response for response in responses.values())
+    if all_filled:
         try:
-            save_response(user_response)
-            st.success("Ihre Antwort wurde gespeichert.")
+            for question, response in responses.items():
+                save_response(question, response)
+            st.success("Ihre Antworten wurden gespeichert.")
         except Exception as e:
-            st.error(f"Fehler beim Speichern der Antwort: {e}")
+            st.error(f"Fehler beim Speichern der Antworten: {e}")
     else:
-        st.error("Antwortfeld darf nicht leer sein.")
+        st.error("Alle Antwortfelder müssen ausgefüllt sein.")
 
 # Anzeigen der gespeicherten Antworten
 if st.button("Antworten anzeigen"):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
     doc = doc_ref.get()
-    if doc.exists:  # 'exists' als Eigenschaft verwenden, nicht als Methode
+    if doc.exists:  # Use 'exists' as a property, not a method
         data = doc.to_dict()
         st.write("Heutige Antworten:")
-        for idx, response in enumerate(data['responses']):
-            st.write(f"{idx + 1}. {response}")
+        for question, answers in data['responses'].items():
+            st.write(f"**{question}**")
+            for idx, response in enumerate(answers):
+                st.write(f"{idx + 1}. {response}")
     else:
         st.write("Es gibt keine Antworten für heute.")

@@ -1,5 +1,6 @@
 import streamlit as st
 import datetime
+import firebase_admin
 from firebase_config import db
 
 # Funktion zum Speichern von Antworten in Firebase

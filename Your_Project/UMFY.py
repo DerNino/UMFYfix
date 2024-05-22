@@ -9,8 +9,12 @@ def load_questions():
     file_path = os.path.join(os.path.dirname(__file__), "fragen.json")
     try:
         with open(file_path, 'r') as file:
-            questions = json.load(file)
-            return questions["questions"]
+            questions_data = json.load(file)
+            if isinstance(questions_data, dict) and "questions" in questions_data:
+                return questions_data["questions"]
+            else:
+                st.error("Invalid JSON format: 'questions' key not found")
+                return []
     except FileNotFoundError as e:
         st.error(f"Error: File not found: {e}")
         return []

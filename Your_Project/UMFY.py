@@ -6,6 +6,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 import base64
+import os
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """

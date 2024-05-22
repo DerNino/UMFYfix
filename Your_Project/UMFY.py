@@ -22,11 +22,9 @@ div[data-testid="stMarkdownContainer"] p {
 h1, h2, h3, h4, h5, h6 {
     color: white;
 }
-button, .stButton > button {
-    color: black !important;
-}
 .stButton > button {
-    background-color: #392940;
+    color: white !important;
+    background-color: black !important;
 }
 </style>
 """
@@ -82,7 +80,10 @@ def save_response(name, response):
     response_data = {"name": name, "response": response}
     if doc.exists:
         data = doc.to_dict()
-        data['responses'].append(response_data)
+        if 'responses' in data:
+            data['responses'].append(response_data)
+        else:
+            data['responses'] = [response_data]
         doc_ref.set(data)
     else:
         doc_ref.set({'responses': [response_data]})
@@ -131,8 +132,11 @@ if st.button("Antworten anzeigen"):
     doc = doc_ref.get()
     if doc.exists:
         data = doc.to_dict()
-        st.write("Heutige Antworten:")
-        for idx, response in enumerate(data['responses']):
-            st.write(f"{idx + 1}. {response['name']}: {response['response']}")
+        if 'responses' in data:
+            st.write("Heutige Antworten:")
+            for idx, response in enumerate(data['responses']):
+                st.write(f"{idx + 1}. {response['name']}: {response['response']}")
+        else:
+            st.write("Es gibt keine Antworten für heute.")
     else:
         st.write("Es gibt keine Antworten für heute.")

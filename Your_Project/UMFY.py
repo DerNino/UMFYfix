@@ -7,6 +7,9 @@ import requests
 from PIL import Image
 from io import BytesIO
 import base64
+import schedule
+import time
+import threading
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -50,10 +53,10 @@ def load_questions():
     try:
         with open(file_path, 'r') as file:
             questions_data = json.load(file)
-            if isinstance(questions_data, list):
-                return questions_data
+            if isinstance(questions_data, dict) and "questions" in questions_data:
+                return questions_data["questions"]
             else:
-                st.error("Invalid JSON format: Expected a list of questions")
+                st.error("Invalid JSON format: 'questions' key not found")
                 return []
     except FileNotFoundError as e:
         st.error(f"Error: File not found: {e}")
@@ -72,6 +75,29 @@ def get_question_of_the_day(date):
         question_index = date.toordinal() % len(questions)
         return questions[question_index]  # Fragen täglich rotieren basierend auf dem Datum
     return "No questions available"
+
+# Funktion zum Speichern der Frage des Tages in Firebase
+def save_question_of_the_day():
+    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+    question_of_the_day = get_question_of_the_day(datetime.date.today())
+    doc_ref = db.collection('responses').document(today_str)
+    
+    doc = doc_ref.get()
+    if not doc.exists:
+        doc_ref.set({'question': question_of_the_day, 'responses': []})
+
+# Planen der täglichen Frage
+def schedule_daily_question():
+    schedule.every().day.at("00:00").do(save_question_of_the_day)
+    
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+# Hintergrundthread für die Planung starten
+thread = threading.Thread(target=schedule_daily_question)
+thread.daemon = True
+thread.start()
 
 # Funktion zum Speichern von Antworten und der Frage in Firebase
 def save_response_and_question(name, response):
@@ -92,16 +118,6 @@ def save_response_and_question(name, response):
         doc_ref.set(data)
     else:
         doc_ref.set({'question': question_of_the_day, 'responses': [response_data]})
-
-# Funktion, um die Frage des Tages in Firebase zu speichern
-def save_daily_question():
-    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
-    question_of_the_day = get_question_of_the_day(datetime.date.today())
-    doc_ref = db.collection('responses').document(today_str)
-    
-    doc = doc_ref.get()
-    if not doc.exists:
-        doc_ref.set({'question': question_of_the_day, 'responses': []})
 
 # Streamlit App
 # Bild von GitHub herunterladen und anzeigen
@@ -129,9 +145,6 @@ except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
 
 st.title("Tägliche Umfrage")
-
-# Speichern der Frage des Tages in Firebase
-save_daily_question()
 
 # Frage des Tages basierend auf dem aktuellen Datum
 question_of_the_day = get_question_of_the_day(datetime.date.today())

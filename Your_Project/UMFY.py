@@ -22,11 +22,9 @@ div[data-testid="stMarkdownContainer"] p {
 h1, h2, h3, h4, h5, h6 {
     color: white;
 }
-button, .stButton > button {
-    color: black !important;
-}
 .stButton > button {
-    background-color: white;
+    color: white !important;
+    background-color: black !important;
 }
 </style>
 """

@@ -5,7 +5,7 @@ from firebase_config import db
 
 # Function to load questions from a JSON file on GitHub
 def load_questions():
-    url = "https://raw.githubusercontent.com/YourUsername/YourRepository/main/fragen.json"
+    url = "https://github.com/DerNino/UMFYfix/blob/main/Your_Project/fragen.json"
     response = requests.get(url)
     try:
         response.raise_for_status()  # Check if the request was successful

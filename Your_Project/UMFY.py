@@ -3,8 +3,6 @@ import datetime
 import json
 from firebase_config import db
 import os
-from PIL import Image
-import base64
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -33,15 +31,8 @@ h1, h2, h3, h4, h5, h6 {
 st.markdown(page_bg, unsafe_allow_html=True)
 
 # URL des Logos auf GitHub
-logo_url = "https://raw.githubusercontent.com/IHR_GITHUB_BENUTZERNAME/IHR_REPOSITORY_NAME/BRANCH_NAME/logo.png"
-
-# Funktion, um ein Bild in Base64 umzuwandeln
-def img_to_bytes(img):
-    from io import BytesIO
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    img_str = base64.b64encode(buffer.getvalue()).decode()
-    return img_str
+logo_url = "https://raw.githubusercontent.com/DerNino/UMFYfix/Your_Project
+/main/logo.png"
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -91,14 +82,7 @@ def save_response(name, response):
 # Streamlit App
 # Bild von GitHub zentrieren und anzeigen
 try:
-    st.markdown(
-        f"""
-        <div style="display: flex; justify-content: center;">
-            <img src="{logo_url}" width="200" height="200">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.image(logo_url, use_column_width=True, caption="Logo")
 except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
 

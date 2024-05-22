@@ -1,5 +1,9 @@
-[
-    "Wie fühlen Sie sich heute?",
-    "Was ist Ihr Lieblingstier?",
-    "Haben Sie heute Sport gemacht?"
-]
+{
+  "questions": [
+    "What is your favorite color?",
+    "What did you have for breakfast?",
+    "What is your favorite hobby?",
+    "What is your dream job?",
+    "What is your favorite book?"
+  ]
+}

@@ -1,8 +1,13 @@
+import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, firestore
+import json
 
-# Path to your local service account key file using raw string
-cred = credentials.Certificate(r"C:\Users\perre\Documents\GitHub\UMFYfix\umfy-29ddb-firebase-adminsdk-gbags-2dda4d0a53.json")
+# Load Firebase credentials from Streamlit secrets
+firebase_config = st.secrets["firebase"]
+
+# Initialize Firebase Admin SDK
+cred = credentials.Certificate(firebase_config)
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()

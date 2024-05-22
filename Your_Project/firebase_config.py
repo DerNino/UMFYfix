@@ -21,4 +21,12 @@ firebase_config = {
 cred = credentials.Certificate(firebase_config)
 firebase_admin.initialize_app(cred)
 
+    except KeyError as e:
+        st.error(f"Missing key in secrets configuration: {e}")
+    except ValueError as e:
+        st.error(f"Error initializing Firebase: {e}")
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
+        st.stop()
+
 db = firestore.client()

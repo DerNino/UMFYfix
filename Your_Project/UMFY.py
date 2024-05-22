@@ -5,6 +5,7 @@ from firebase_config import db
 import requests
 from PIL import Image
 from io import BytesIO
+import base64
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -34,6 +35,13 @@ st.markdown(page_bg, unsafe_allow_html=True)
 
 # URL des Logos auf GitHub
 logo_url = "https://raw.githubusercontent.com/DerNino/UMFYfix/main/Your_Project/logo.png"
+
+# Funktion, um ein Bild in Base64 umzuwandeln
+def img_to_bytes(img):
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode()
+    return img_str
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -89,11 +97,13 @@ try:
     # Bildgröße auf ein Viertel der ursprünglichen Größe reduzieren
     width, height = img.size
     img = img.resize((width // 2, height // 2))
+    # Bild in Base64 umwandeln
+    img_str = img_to_bytes(img)
     # Bild in der Mitte anzeigen
     st.markdown(
         f"""
         <div style="display: flex; justify-content: center;">
-            <img src="data:image/png;base64,{img_to_bytes(img)}" width="{width // 2}" height="{height // 2}">
+            <img src="data:image/png;base64,{img_str}" width="{width // 2}" height="{height // 2}">
         </div>
         """,
         unsafe_allow_html=True
@@ -102,14 +112,6 @@ except requests.exceptions.RequestException as e:
     st.error(f"Fehler beim Herunterladen des Bildes: {e}")
 except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
-
-# Funktion, um ein Bild in Base64 umzuwandeln
-def img_to_bytes(img):
-    from io import BytesIO
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    img_str = base64.b64encode(buffer.getvalue()).decode()
-    return img_str
 
 st.title("Tägliche Umfrage")
 

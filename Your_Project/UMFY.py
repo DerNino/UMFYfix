@@ -22,9 +22,11 @@ div[data-testid="stMarkdownContainer"] p {
 h1, h2, h3, h4, h5, h6 {
     color: white;
 }
+button, .stButton > button {
+    color: black !important;
+}
 .stButton > button {
-    color: white !important;
-    background-color: black !important;
+    background-color: white;
 }
 </style>
 """
@@ -73,16 +75,17 @@ def get_question_of_the_day():
     return "No questions available"
 
 # Funktion zum Speichern von Antworten in Firebase
-def save_response(response):
+def save_response(name, response):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
     doc = doc_ref.get()
+    response_data = {"name": name, "response": response}
     if doc.exists:
         data = doc.to_dict()
-        data['responses'].append(response)
+        data['responses'].append(response_data)
         doc_ref.set(data)
     else:
-        doc_ref.set({'responses': [response]})
+        doc_ref.set({'responses': [response_data]})
 
 # Streamlit App
 # Bild laden, Größe ändern und anzeigen
@@ -107,28 +110,29 @@ st.title("Tägliche Umfrage")
 question_of_the_day = get_question_of_the_day()
 st.write("Frage des Tages:", question_of_the_day)
 
-st.write("Bitte geben Sie Ihre Antwort ein:")
+st.write("Bitte geben Sie Ihren Namen und Ihre Antwort ein:")
+user_name = st.text_input("Ihr Name")
 user_response = st.text_area("Ihre Antwort")
 
 if st.button("Antwort senden"):
-    if user_response:
+    if user_name and user_response:
         try:
-            save_response(user_response)
+            save_response(user_name, user_response)
             st.success("Ihre Antwort wurde gespeichert.")
         except Exception as e:
             st.error(f"Fehler beim Speichern der Antwort: {e}")
     else:
-        st.error("Antwortfeld darf nicht leer sein.")
+        st.error("Name und Antwortfeld dürfen nicht leer sein.")
 
 # Anzeigen der gespeicherten Antworten
 if st.button("Antworten anzeigen"):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
     doc = doc_ref.get()
-    if doc.exists:  # 'exists' als Eigenschaft verwenden, nicht als Methode
+    if doc.exists:
         data = doc.to_dict()
         st.write("Heutige Antworten:")
         for idx, response in enumerate(data['responses']):
-            st.write(f"{idx + 1}. {response}")
+            st.write(f"{idx + 1}. {response['name']}: {response['response']}")
     else:
         st.write("Es gibt keine Antworten für heute.")

@@ -1,12 +1,12 @@
 import streamlit as st
 import datetime
 import json
-import os
 from firebase_config import db
 import requests
 from PIL import Image
 from io import BytesIO
 import base64
+import os
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -50,10 +50,10 @@ def load_questions():
     try:
         with open(file_path, 'r') as file:
             questions_data = json.load(file)
-            if isinstance(questions_data, dict) and "questions" in questions_data:
-                return questions_data["questions"]
+            if isinstance(questions_data, list):  # Geändert: Überprüfen, ob die JSON-Datei eine Liste ist
+                return questions_data
             else:
-                st.error("Invalid JSON format: 'questions' key not found")
+                st.error("Invalid JSON format: Expected a list of questions")  # Geändert: Fehlerbehandlung angepasst
                 return []
     except FileNotFoundError as e:
         st.error(f"Error: File not found: {e}")
@@ -70,7 +70,8 @@ def get_question_of_the_day():
     questions = load_questions()
     if questions:
         today = datetime.date.today()
-        return questions[today.day % len(questions)]  # Fragen täglich rotieren
+        question_index = today.day % len(questions)  # Geändert: Index basierend auf dem Tag des Monats berechnen
+        return questions[question_index]
     return "No questions available"
 
 # Funktion zum Speichern von Antworten in Firebase
@@ -116,7 +117,7 @@ except Exception as e:
 
 st.title("Tägliche Umfrage")
 
-question_of_the_day = get_question_of_the_day()
+question_of_the_day = get_question_of_the_day()  # Geändert: Frage des Tages abrufen
 st.write("Frage des Tages:", question_of_the_day)
 
 st.write("Bitte geben Sie Ihren Namen und Ihre Antwort ein:")
@@ -133,18 +134,15 @@ if st.button("Antwort senden"):
     else:
         st.error("Name und Antwortfeld dürfen nicht leer sein.")
 
-# Kalender zur Auswahl eines Datums
-selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
-
-# Anzeigen der gespeicherten Antworten für das ausgewählte Datum
-if st.button("Antworten für diesen Tag anzeigen"):
-    selected_date_str = selected_date.strftime("%Y-%m-%d")
-    doc_ref = db.collection('responses').document(selected_date_str)
+# Anzeigen der gespeicherten Antworten
+if st.button("Antworten anzeigen"):
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    doc_ref = db.collection('responses').document(today)
     doc = doc_ref.get()
     if doc.exists:
         data = doc.to_dict()
         if 'responses' in data:
-            st.write(f"Antworten vom {selected_date_str}:")
+            st.write("Heutige Antworten:")
             for idx, response in enumerate(data['responses']):
                 try:
                     name = response.get('name', 'Unbekannt')
@@ -153,6 +151,6 @@ if st.button("Antworten für diesen Tag anzeigen"):
                 except KeyError as e:
                     st.error(f"Fehler beim Abrufen der Antwort: {e}")
         else:
-            st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+            st.write("Es gibt keine Antworten für heute.")
     else:
-        st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+        st.write("Es gibt keine Antworten für heute.")

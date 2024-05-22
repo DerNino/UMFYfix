@@ -2,8 +2,9 @@ import streamlit as st
 import datetime
 import json
 from firebase_config import db
-import os
+import requests
 from PIL import Image
+from io import BytesIO
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -31,8 +32,8 @@ h1, h2, h3, h4, h5, h6 {
 # Wende die CSS-Styles an
 st.markdown(page_bg, unsafe_allow_html=True)
 
-# Pfad zum hochgeladenen Bild
-image_path = "/mnt/data/image.png"
+# URL des Logos auf GitHub
+logo_url = "https://raw.githubusercontent.com/IHR_GITHUB_BENUTZERNAME/IHR_REPOSITORY_NAME/BRANCH_NAME/logo.png"
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -80,9 +81,10 @@ def save_response(name, response):
         doc_ref.set({'responses': [response_data]})
 
 # Streamlit App
-# Bild von lokalem Pfad laden und anzeigen
+# Bild von GitHub herunterladen und anzeigen
 try:
-    img = Image.open(image_path)
+    response = requests.get(logo_url)
+    img = Image.open(BytesIO(response.content))
     st.image(img, use_column_width=True, caption="Logo")
 except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")

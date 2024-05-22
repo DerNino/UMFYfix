@@ -75,8 +75,9 @@ def get_question_of_the_day(date):
 
 # Funktion zum Speichern von Antworten in Firebase
 def save_response(name, response):
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    doc_ref = db.collection('responses').document(today)
+    now = datetime.datetime.now()
+    today_str = now.strftime("%Y-%m-%d")
+    doc_ref = db.collection('responses').document(today_str)
     doc = doc_ref.get()
     response_data = {"name": name, "response": response}
     if doc.exists:

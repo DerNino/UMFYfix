@@ -1,9 +1,8 @@
 import streamlit as st
 import datetime
-import firebase_admin
 from firebase_config import db
 
-# Funktion zum Speichern von Antworten in Firebase
+# Function to save responses in Firebase
 def save_response(response):
     today = datetime.date.today().strftime("%Y-%m-%d")
     doc_ref = db.collection('responses').document(today)
@@ -40,3 +39,4 @@ if st.button("Antworten anzeigen"):
             st.write(f"{idx + 1}. {response}")
     else:
         st.write("Es gibt keine Antworten für heute.")
+

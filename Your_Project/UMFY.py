@@ -3,6 +3,7 @@ import datetime
 import json
 from firebase_config import db
 import os
+from PIL import Image
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -30,8 +31,8 @@ h1, h2, h3, h4, h5, h6 {
 # Wende die CSS-Styles an
 st.markdown(page_bg, unsafe_allow_html=True)
 
-# URL des Logos auf GitHub
-logo_url = "https://github.com/DerNino/UMFYfix/blob/main/Your_Project/logo.png"
+# Pfad zum hochgeladenen Bild
+image_path = "/mnt/data/image.png"
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -79,9 +80,10 @@ def save_response(name, response):
         doc_ref.set({'responses': [response_data]})
 
 # Streamlit App
-# Bild von GitHub zentrieren und anzeigen
+# Bild von lokalem Pfad laden und anzeigen
 try:
-    st.image(logo_url, use_column_width=True, caption="Logo")
+    img = Image.open(image_path)
+    st.image(img, use_column_width=True, caption="Logo")
 except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
 

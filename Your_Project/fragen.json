@@ -1,4 +1,5 @@
-[
+{
+    "questions": [
         "Was denkst du, ist die größte Herausforderung, der sich unsere Gesellschaft derzeit gegenübersieht?",
         "Wie würdest du die Einkommensungleichheit in deinem Land bekämpfen?",
         "Was hältst du von der aktuellen Bildungspolitik und was würdest du ändern?",
@@ -39,5 +40,5 @@
         "Was hältst du von der Nutzung von Robotik in der Pflege und Altenbetreuung?",
         "Wie können wir die Sicherheit und den Datenschutz in der digitalen Welt gewährleisten?",
         "Welche Verantwortung tragen Wissenschaftler und Forscher bei der Veröffentlichung ihrer Ergebnisse?"
-]
-
+    ]
+}

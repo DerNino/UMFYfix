@@ -1,12 +1,12 @@
 import streamlit as st
 import datetime
 import json
+import os
 from firebase_config import db
 import requests
 from PIL import Image
 from io import BytesIO
 import base64
-import os
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -133,15 +133,18 @@ if st.button("Antwort senden"):
     else:
         st.error("Name und Antwortfeld dürfen nicht leer sein.")
 
-# Anzeigen der gespeicherten Antworten
-if st.button("Antworten anzeigen"):
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    doc_ref = db.collection('responses').document(today)
+# Kalender zur Auswahl eines Datums
+selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
+
+# Anzeigen der gespeicherten Antworten für das ausgewählte Datum
+if st.button("Antworten für diesen Tag anzeigen"):
+    selected_date_str = selected_date.strftime("%Y-%m-%d")
+    doc_ref = db.collection('responses').document(selected_date_str)
     doc = doc_ref.get()
     if doc.exists:
         data = doc.to_dict()
         if 'responses' in data:
-            st.write("Heutige Antworten:")
+            st.write(f"Antworten vom {selected_date_str}:")
             for idx, response in enumerate(data['responses']):
                 try:
                     name = response.get('name', 'Unbekannt')
@@ -150,6 +153,6 @@ if st.button("Antworten anzeigen"):
                 except KeyError as e:
                     st.error(f"Fehler beim Abrufen der Antwort: {e}")
         else:
-            st.write("Es gibt keine Antworten für heute.")
+            st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
     else:
-        st.write("Es gibt keine Antworten für heute.")
+        st.write(f"Es gibt keine Antworten für den {selected_date_str}.")

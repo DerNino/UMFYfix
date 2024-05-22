@@ -6,7 +6,7 @@ import os
 from PIL import Image
 
 # Pfad zum Bild im selben Verzeichnis wie das Skript
-IMAGE_PATH = os.path.join(os.path.dirname(__file__), "UMFY Logo.png")
+IMAGE_PATH = os.path.join(os.path.dirname(__file__), "logo.png")
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -50,10 +50,11 @@ def save_response(response):
         doc_ref.set({'responses': [response]})
 
 # Streamlit App
-# Bild laden und anzeigen
+# Bild laden, Größe ändern und anzeigen
 try:
     img = Image.open(IMAGE_PATH)
-    st.image(img, use_column_width=True)
+    img = img.resize((img.width // 2, img.height // 2))  # Bild auf ein Viertel der ursprünglichen Größe reduzieren
+    st.image(img, use_column_width=False)
 except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
 

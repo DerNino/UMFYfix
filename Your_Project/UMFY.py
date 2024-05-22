@@ -2,10 +2,11 @@ import streamlit as st
 import datetime
 import json
 from firebase_config import db
+import os
 
-# Function to load questions from a local JSON file
+# Function to load questions from a local JSON file in the same repository
 def load_questions():
-    file_path = "Your_Project/fragen.json"  # Replace with the actual file path
+    file_path = os.path.join(os.path.dirname(__file__), "fragen.json")
     try:
         with open(file_path, 'r') as file:
             questions = json.load(file)

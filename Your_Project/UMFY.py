@@ -131,7 +131,12 @@ if st.button("Antworten anzeigen"):
         if 'responses' in data:
             st.write("Heutige Antworten:")
             for idx, response in enumerate(data['responses']):
-                st.write(f"{idx + 1}. {response['name']}: {response['response']}")
+                try:
+                    name = response.get('name', 'Unbekannt')
+                    answer = response.get('response', 'Keine Antwort')
+                    st.write(f"{idx + 1}. {name}: {answer}")
+                except KeyError as e:
+                    st.error(f"Fehler beim Abrufen der Antwort: {e}")
         else:
             st.write("Es gibt keine Antworten für heute.")
     else:

@@ -33,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 st.markdown(page_bg, unsafe_allow_html=True)
 
 # URL des Logos auf GitHub
-logo_url = "https://raw.githubusercontent.com/IHR_GITHUB_BENUTZERNAME/IHR_REPOSITORY_NAME/BRANCH_NAME/logo.png"
+logo_url = "https://raw.githubusercontent.com/DerNino/UMFYfix/main/logo.png"
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -84,8 +84,11 @@ def save_response(name, response):
 # Bild von GitHub herunterladen und anzeigen
 try:
     response = requests.get(logo_url)
+    response.raise_for_status()  # Check if the request was successful
     img = Image.open(BytesIO(response.content))
     st.image(img, use_column_width=True, caption="Logo")
+except requests.exceptions.RequestException as e:
+    st.error(f"Fehler beim Herunterladen des Bildes: {e}")
 except Exception as e:
     st.error(f"Fehler beim Laden des Bildes: {e}")
 

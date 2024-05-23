@@ -80,7 +80,7 @@ def save_response_and_question(name, response):
     today_str = datetime.datetime.now(tz).strftime("%Y-%m-%d")
     question_of_the_day = get_question_of_the_day(datetime.date.today())
     doc_ref = db.collection('responses').document(today_str)
-    response_data = {"name": name, "response": response}
+    response_data = {"name": name, "response": response, "comments": []}
 
     doc = doc_ref.get()
     if doc.exists:
@@ -94,6 +94,21 @@ def save_response_and_question(name, response):
         doc_ref.set(data)
     else:
         doc_ref.set({'question': question_of_the_day, 'responses': [response_data]})
+
+# Funktion zum Speichern von Kommentaren
+def save_comment(date_str, response_index, name, comment):
+    doc_ref = db.collection('responses').document(date_str)
+    doc = doc_ref.get()
+    if doc.exists:
+        data = doc.to_dict()
+        responses = data.get('responses', [])
+        if 0 <= response_index < len(responses):
+            if 'comments' not in responses[response_index]:
+                responses[response_index]['comments'] = []
+            responses[response_index]['comments'].append({"name": name, "comment": comment})
+            doc_ref.set(data)
+            return True
+    return False
 
 # Funktion zum Erstellen eines neuen Tages in Firebase
 def create_new_day_entry():
@@ -168,18 +183,4 @@ if st.button("Antworten für diesen Tag anzeigen"):
         data = doc.to_dict()
         question_for_selected_date = data.get('question', 'Keine Frage gefunden')
         
-        st.write(f"Frage für den {selected_date_str}: {question_for_selected_date}")
-        
-        if 'responses' in data:
-            st.write(f"Antworten vom {selected_date_str}:")
-            for idx, response in enumerate(data['responses']):
-                try:
-                    name = response.get('name', 'Unbekannt')
-                    answer = response.get('response', 'Keine Antwort')
-                    st.write(f"{idx + 1}. {name}: {answer}")
-                except KeyError as e:
-                    st.error(f"Fehler beim Abrufen der Antwort: {e}")
-        else:
-            st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
-    else:
-        st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+        st.write(f"F

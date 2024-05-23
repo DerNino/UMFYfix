@@ -183,4 +183,37 @@ if st.button("Antworten für diesen Tag anzeigen"):
         data = doc.to_dict()
         question_for_selected_date = data.get('question', 'Keine Frage gefunden')
         
-        st.write(f"F
+        st.write(f"Frage für den {selected_date_str}: {question_for_selected_date}")
+        
+        if 'responses' in data:
+            st.write(f"Antworten vom {selected_date_str}:")
+            for idx, response in enumerate(data['responses']):
+                try:
+                    name = response.get('name', 'Unbekannt')
+                    answer = response.get('response', 'Keine Antwort')
+                    st.write(f"{idx + 1}. {name}: {answer}")
+                    
+                    # Kommentare anzeigen
+                    comments = response.get('comments', [])
+                    if comments:
+                        st.write("Kommentare:")
+                        for comment in comments:
+                            st.write(f"- {comment['name']}: {comment['comment']}")
+                    
+                    # Kommentarformular
+                    comment_name = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", key=f"comment_name_{idx}")
+                    comment_text = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", key=f"comment_text_{idx}")
+                    if st.button(f"Kommentar senden für Antwort {idx + 1}", key=f"comment_button_{idx}"):
+                        if comment_name and comment_text:
+                            if save_comment(selected_date_str, idx, comment_name, comment_text):
+                                st.success("Ihr Kommentar wurde gespeichert.")
+                            else:
+                                st.error("Fehler beim Speichern des Kommentars.")
+                        else:
+                            st.error("Name und Kommentar dürfen nicht leer sein.")
+                except KeyError as e:
+                    st.error(f"Fehler beim Abrufen der Antwort: {e}")
+        else:
+            st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+    else:
+        st.write(f"Es gibt keine Antworten für den {selected_date_str}.")

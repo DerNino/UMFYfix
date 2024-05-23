@@ -179,7 +179,7 @@ if st.button("Antworten für diesen Tag anzeigen"):
     
     doc_ref = db.collection('responses').document(selected_date_str)
     doc = doc_ref.get()
-    if doc.exists():
+    if doc.exists:
         data = doc.to_dict()
         question_for_selected_date = data.get('question', 'Keine Frage gefunden')
         
@@ -201,10 +201,13 @@ if st.button("Antworten für diesen Tag anzeigen"):
                             st.write(f"- {comment['name']}: {comment['comment']}")
                     
                     # Kommentarformular mit einem "Kommentieren"-Button anzeigen
-                    if st.button(f"Kommentieren für Antwort {idx + 1}", key=f"show_comment_form_{idx}"):
-                        st.session_state[f"show_comment_form_{idx}"] = not st.session_state.get(f"show_comment_form_{idx}", False)
+                    if f"show_comment_form_{idx}" not in st.session_state:
+                        st.session_state[f"show_comment_form_{idx}"] = False
 
-                    if st.session_state.get(f"show_comment_form_{idx}", False):
+                    if st.button(f"Kommentieren für Antwort {idx + 1}", key=f"show_comment_button_{idx}"):
+                        st.session_state[f"show_comment_form_{idx}"] = not st.session_state[f"show_comment_form_{idx}"]
+
+                    if st.session_state[f"show_comment_form_{idx}"]:
                         comment_name = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", key=f"comment_name_{idx}")
                         comment_text = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", key=f"comment_text_{idx}")
                         if st.button(f"Kommentar senden für Antwort {idx + 1}", key=f"comment_button_{idx}"):

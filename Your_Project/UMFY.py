@@ -225,3 +225,4 @@ if st.button("Antworten für diesen Tag anzeigen"):
             st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
     else:
         st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+

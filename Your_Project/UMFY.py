@@ -202,12 +202,16 @@ if st.button("Antworten für diesen Tag anzeigen"):
                     
                     # Kommentarformular mit einem "Kommentieren"-Button anzeigen
                     if st.button(f"Kommentieren für Antwort {idx + 1}", key=f"show_comment_form_{idx}"):
+                        st.session_state[f"show_comment_form_{idx}"] = not st.session_state.get(f"show_comment_form_{idx}", False)
+
+                    if st.session_state.get(f"show_comment_form_{idx}", False):
                         comment_name = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", key=f"comment_name_{idx}")
                         comment_text = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", key=f"comment_text_{idx}")
                         if st.button(f"Kommentar senden für Antwort {idx + 1}", key=f"comment_button_{idx}"):
                             if comment_name and comment_text:
                                 if save_comment(selected_date_str, idx, comment_name, comment_text):
                                     st.success("Ihr Kommentar wurde gespeichert.")
+                                    st.session_state[f"show_comment_form_{idx}"] = False  # Schließen des Kommentarformulars nach dem Senden
                                 else:
                                     st.error("Fehler beim Speichern des Kommentars.")
                             else:

@@ -200,17 +200,18 @@ if st.button("Antworten für diesen Tag anzeigen"):
                         for comment in comments:
                             st.write(f"- {comment['name']}: {comment['comment']}")
                     
-                    # Kommentarformular
-                    comment_name = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", key=f"comment_name_{idx}")
-                    comment_text = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", key=f"comment_text_{idx}")
-                    if st.button(f"Kommentar senden für Antwort {idx + 1}", key=f"comment_button_{idx}"):
-                        if comment_name and comment_text:
-                            if save_comment(selected_date_str, idx, comment_name, comment_text):
-                                st.success("Ihr Kommentar wurde gespeichert.")
+                    # Kommentarformular mit einem "Kommentieren"-Button anzeigen
+                    if st.button(f"Kommentieren für Antwort {idx + 1}", key=f"show_comment_form_{idx}"):
+                        comment_name = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", key=f"comment_name_{idx}")
+                        comment_text = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", key=f"comment_text_{idx}")
+                        if st.button(f"Kommentar senden für Antwort {idx + 1}", key=f"comment_button_{idx}"):
+                            if comment_name and comment_text:
+                                if save_comment(selected_date_str, idx, comment_name, comment_text):
+                                    st.success("Ihr Kommentar wurde gespeichert.")
+                                else:
+                                    st.error("Fehler beim Speichern des Kommentars.")
                             else:
-                                st.error("Fehler beim Speichern des Kommentars.")
-                        else:
-                            st.error("Name und Kommentar dürfen nicht leer sein.")
+                                st.error("Name und Kommentar dürfen nicht leer sein.")
                 except KeyError as e:
                     st.error(f"Fehler beim Abrufen der Antwort: {e}")
         else:

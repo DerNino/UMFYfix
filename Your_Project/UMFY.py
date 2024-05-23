@@ -179,7 +179,7 @@ if st.button("Antworten für diesen Tag anzeigen"):
     
     doc_ref = db.collection('responses').document(selected_date_str)
     doc = doc_ref.get()
-    if doc.exists:
+    if doc.exists():
         data = doc.to_dict()
         question_for_selected_date = data.get('question', 'Keine Frage gefunden')
         

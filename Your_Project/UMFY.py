@@ -29,6 +29,12 @@ h1, h2, h3, h4, h5, h6 {
     color: white !important;
     background-color: black !important;
 }
+.st-expander {
+    background-color: black !important;
+}
+.st-expander div[role="button"] {
+    background-color: black !important;
+}
 </style>
 """
 

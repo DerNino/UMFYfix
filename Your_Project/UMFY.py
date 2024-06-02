@@ -129,10 +129,15 @@ def create_new_day_entry():
         question_of_the_day = get_question_of_the_day(today)
         doc_ref.set({'question': question_of_the_day, 'responses': []})
 
-# GitHub Konfiguration
-GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
-GITHUB_REPO = st.secrets["GITHUB_REPO"]
-GITHUB_FILE_PATH = st.secrets["GITHUB_FILE_PATH"]
+# Überprüfe, ob die benötigten Secrets vorhanden sind
+try:
+    GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
+    GITHUB_REPO = st.secrets["GITHUB_REPO"]
+    GITHUB_FILE_PATH = st.secrets["GITHUB_FILE_PATH"]
+except KeyError as e:
+    st.error(f"Fehlendes Secret: {e}")
+    st.stop()
+
 GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
 
 def get_credentials():

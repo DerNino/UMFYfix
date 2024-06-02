@@ -18,7 +18,7 @@ page_bg = """
     background-size: 400% 400%;
     animation: gradientAnimation 15s ease infinite;
 }
-.stSidebar, .css-1lcbmhc {
+.stSidebar, .css-1lcbmhc, .css-1d391kg {
     background: linear-gradient(135deg, #4a148c, #7b1fa2, #8e24aa, #d500f9);
     color: white;
     background-size: 400% 400%;
@@ -244,7 +244,7 @@ if not st.session_state['logged_in']:
             login_username = st.text_input("Benutzername (Anmeldung)")
             login_password = st.text_input("Passwort (Anmeldung)", type="password")
             if st.button("Anmelden"):
-                if login_username and login_password:
+                if login_username und login_password:
                     if login_user(login_username, login_password):
                         st.experimental_rerun()
 else:
@@ -366,3 +366,4 @@ else:
                 st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
         else:
             st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+

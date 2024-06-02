@@ -37,6 +37,18 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
+#response-count {
+    position: fixed;
+    top: 50%;
+    right: 10px;
+    background-color: #ffffff;
+    color: #392981;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-50%);
+    z-index: 1000;
+}
 </style>
 """
 
@@ -164,6 +176,24 @@ create_new_day_entry()
 question_of_the_day = get_question_of_the_day(datetime.date.today())
 st.write("Frage des Tages:", question_of_the_day)
 
+# Anzahl der bisherigen Antworten für heute
+today_str = datetime.datetime.now(pytz.timezone('Europe/Berlin')).strftime("%Y-%m-%d")
+doc_ref = db.collection('responses').document(today_str)
+doc = doc_ref.get()
+response_count = 0
+if doc.exists:
+    data = doc.to_dict()
+    if 'responses' in data:
+        response_count = len(data['responses'])
+
+# Anzeige der Anzahl der Antworten in einem fixierten Feld
+st.markdown(f"""
+<div id="response-count">
+    <h4>Antworten heute:</h4>
+    <p>{response_count}</p>
+</div>
+""", unsafe_allow_html=True)
+
 st.write("Bitte geben Sie Ihren Namen und Ihre Antwort ein:")
 user_name = st.text_input("Ihr Name")
 user_response = st.text_area("Ihre Antwort")
@@ -236,3 +266,4 @@ if st.button("Antworten für diesen Tag anzeigen") or st.session_state.get("resp
             st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
     else:
         st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+

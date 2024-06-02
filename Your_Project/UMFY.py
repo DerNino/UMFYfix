@@ -35,8 +35,8 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
-.stSidebar {
-    background-color: #392981 !important;
+.css-1d391kg {
+    background-color: #392980 !important;
 }
 </style>
 """

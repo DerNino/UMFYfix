@@ -35,35 +35,8 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
-div[data-testid="stSidebar"] .stButton > button {
-    color: black !important;
-    background-color: white !important;
-}
-div[data-testid="stSidebar"] {
-    color: black !important;
-}
-div[data-testid="stSidebar"] h1, 
-div[data-testid="stSidebar"] h2, 
-div[data-testid="stSidebar"] h3, 
-div[data-testid="stSidebar"] h4, 
-div[data-testid="stSidebar"] h5, 
-div[data-testid="stSidebar"] h6, 
-div[data-testid="stSidebar"] label, 
-div[data-testid="stSidebar"] span, 
-div[data-testid="stSidebar"] p {
-    color: black !important;
-}
-div[data-testid="stSidebar"] .css-1n76uvr {
-    color: black !important;
-}
-div[data-testid="stSidebar"] .css-1lcbmhc {
-    color: black !important;
-}
-div[data-testid="stSidebar"] .css-1q8dd3e {
-    color: black !important;
-}
-div[data-testid="stSidebar"] .css-1v0mbdj {
-    color: black !important;
+.stSidebar {
+    background-color: #2E2E2E !important;
 }
 </style>
 """

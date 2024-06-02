@@ -174,7 +174,8 @@ if st.button("Antwort senden"):
 selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
 
 # Anzeigen der gespeicherten Antworten und der Frage für das ausgewählte Datum
-if st.button("Antworten für diesen Tag anzeigen"):
+if st.button("Antworten für diesen Tag anzeigen") or st.session_state.get("responses_displayed", False):
+    st.session_state["responses_displayed"] = True
     selected_date_str = selected_date.strftime("%Y-%m-%d")
     
     doc_ref = db.collection('responses').document(selected_date_str)
@@ -200,21 +201,21 @@ if st.button("Antworten für diesen Tag anzeigen"):
                         for comment in comments:
                             st.write(f"- {comment['name']}: {comment['comment']}")
 
-                    # Kommentarformular mit einem "Kommentieren"-Button anzeigen
-                    if f"show_comment_form_{idx}" not in st.session_state:
-                        st.session_state[f"show_comment_form_{idx}"] = False
-
-                    if st.button("Kommentieren", key=f"show_comment_button_{idx}"):
-                        st.session_state[f"show_comment_form_{idx}"] = not st.session_state[f"show_comment_form_{idx}"]
-
-                    if st.session_state[f"show_comment_form_{idx}"]:
-                        comment_name = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", key=f"comment_name_{idx}")
-                        comment_text = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", key=f"comment_text_{idx}")
+                    # Kommentarformular anzeigen
+                    comment_key = f"comment_{selected_date_str}_{idx}"
+                    if comment_key not in st.session_state:
+                        st.session_state[comment_key] = {"name": "", "comment": ""}
+                    
+                    with st.expander("Kommentieren", expanded=False):
+                        st.session_state[comment_key]["name"] = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", value=st.session_state[comment_key]["name"], key=f"comment_name_{idx}")
+                        st.session_state[comment_key]["comment"] = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", value=st.session_state[comment_key]["comment"], key=f"comment_text_{idx}")
                         if st.button("Veröffentlichen", key=f"comment_button_{idx}"):
+                            comment_name = st.session_state[comment_key]["name"]
+                            comment_text = st.session_state[comment_key]["comment"]
                             if comment_name and comment_text:
                                 if save_comment(selected_date_str, idx, comment_name, comment_text):
                                     st.success("Ihr Kommentar wurde gespeichert.")
-                                    st.session_state[f"show_comment_form_{idx}"] = False  # Schließen des Kommentarformulars nach dem Senden
+                                    st.session_state[comment_key] = {"name": "", "comment": ""}
                                     st.experimental_rerun()  # Seite neu laden, um den Kommentar anzuzeigen
                                 else:
                                     st.error("Fehler beim Speichern des Kommentars.")

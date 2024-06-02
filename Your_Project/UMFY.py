@@ -363,7 +363,7 @@ else:
                                         st.error("Fehler beim Speichern des Kommentars.")
                                 else:
                                     st.error("Kommentar darf nicht leer sein.")
-                    except KeyError als e:
+                    except KeyError as e:
                         st.error(f"Fehler beim Abrufen der Antwort: {e}")
             else:
                 st.write(f"Es gibt keine Antworten für den {selected_date_str}.")

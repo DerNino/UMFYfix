@@ -80,7 +80,7 @@ def save_response_and_question(name, response):
     today_str = datetime.datetime.now(tz).strftime("%Y-%m-%d")
     question_of_the_day = get_question_of_the_day(datetime.date.today())
     doc_ref = db.collection('responses').document(today_str)
-    response_data = {"name": name, "response": response}
+    response_data = {"name": name, "response": response, "comments": []}
 
     doc = doc_ref.get()
     if doc.exists:
@@ -94,6 +94,21 @@ def save_response_and_question(name, response):
         doc_ref.set(data)
     else:
         doc_ref.set({'question': question_of_the_day, 'responses': [response_data]})
+
+# Funktion zum Speichern von Kommentaren
+def save_comment(date_str, response_index, name, comment):
+    doc_ref = db.collection('responses').document(date_str)
+    doc = doc_ref.get()
+    if doc.exists:
+        data = doc.to_dict()
+        responses = data.get('responses', [])
+        if 0 <= response_index < len(responses):
+            if 'comments' not in responses[response_index]:
+                responses[response_index]['comments'] = []
+            responses[response_index]['comments'].append({"name": name, "comment": comment})
+            doc_ref.set(data)
+            return True
+    return False
 
 # Funktion zum Erstellen eines neuen Tages in Firebase
 def create_new_day_entry():
@@ -177,6 +192,33 @@ if st.button("Antworten für diesen Tag anzeigen"):
                     name = response.get('name', 'Unbekannt')
                     answer = response.get('response', 'Keine Antwort')
                     st.write(f"{idx + 1}. {name}: {answer}")
+                    
+                    # Kommentare anzeigen
+                    comments = response.get('comments', [])
+                    if comments:
+                        st.write("Kommentare:")
+                        for comment in comments:
+                            st.write(f"- {comment['name']}: {comment['comment']}")
+                    
+                    # Kommentarformular mit einem "Kommentieren"-Button anzeigen
+                    if f"show_comment_form_{idx}" not in st.session_state:
+                        st.session_state[f"show_comment_form_{idx}"] = False
+
+                    if st.button(f"Kommentieren für Antwort {idx + 1}", key=f"show_comment_button_{idx}"):
+                        st.session_state[f"show_comment_form_{idx}"] = not st.session_state[f"show_comment_form_{idx}"]
+
+                    if st.session_state[f"show_comment_form_{idx}"]:
+                        comment_name = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", key=f"comment_name_{idx}")
+                        comment_text = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", key=f"comment_text_{idx}")
+                        if st.button(f"Kommentar senden für Antwort {idx + 1}", key=f"comment_button_{idx}"):
+                            if comment_name and comment_text:
+                                if save_comment(selected_date_str, idx, comment_name, comment_text):
+                                    st.success("Ihr Kommentar wurde gespeichert.")
+                                    st.session_state[f"show_comment_form_{idx}"] = False  # Schließen des Kommentarformulars nach dem Senden
+                                else:
+                                    st.error("Fehler beim Speichern des Kommentars.")
+                            else:
+                                st.error("Name und Kommentar dürfen nicht leer sein.")
                 except KeyError as e:
                     st.error(f"Fehler beim Abrufen der Antwort: {e}")
         else:

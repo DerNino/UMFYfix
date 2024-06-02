@@ -18,12 +18,6 @@ page_bg = """
     background-size: 400% 400%;
     animation: gradientAnimation 15s ease infinite;
 }
-.stSidebar, .stSidebarContent {
-    background: linear-gradient(135deg, #4a148c, #7b1fa2, #8e24aa, #d500f9);
-    color: white;
-    background-size: 400% 400%;
-    animation: gradientAnimation 15s ease infinite;
-}
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -48,14 +42,20 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
+.stSidebar {
+    background-color: #4a148c !important;
+}
 </style>
 """
 
 # Wende die CSS-Styles an
 st.markdown(page_bg, unsafe_allow_html=True)
 
-# URL des Logos auf GitHub
+# URL des Logos und der Bilder auf GitHub
 logo_url = "https://raw.githubusercontent.com/DerNino/UMFYfix/main/Your_Project/logo.png"
+dog_image_url = "https://raw.githubusercontent.com/DerNino/UMFYfix/main/Your_Project/Hund.png"
+cat_image_url = "https://raw.githubusercontent.com/DerNino/UMFYfix/main/Your_Project/Katze.png"
+crown_image_url = "https://raw.githubusercontent.com/DerNino/UMFYfix/main/Your_Project/Krone.png"
 
 # Funktion, um ein Bild in Base64 umzuwandeln
 def img_to_bytes(img):
@@ -63,6 +63,17 @@ def img_to_bytes(img):
     img.save(buffer, format="PNG")
     img_str = base64.b64encode(buffer.getvalue()).decode()
     return img_str
+
+# Funktion, um Base64-Bilder zu laden
+def load_base64_image(image_url):
+    response = requests.get(image_url)
+    img = Image.open(BytesIO(response.content))
+    return img_to_bytes(img)
+
+# Base64-kodierte Bilder
+dog_image_base64 = load_base64_image(dog_image_url)
+cat_image_base64 = load_base64_image(cat_image_url)
+crown_image_base64 = load_base64_image(crown_image_url)
 
 # Funktion zum Laden von Fragen aus einer lokalen JSON-Datei im gleichen Verzeichnis
 def load_questions():
@@ -240,7 +251,36 @@ else:
         user_data = user_ref.get().to_dict()
         user_score = user_data.get('score', 0)
         st.write(f"Ihr Score: {user_score}")
-        
+
+        # Belohnung basierend auf dem Score anzeigen
+        if user_score >= 10000:
+            st.markdown(
+                f"""
+                <div style="position: fixed; bottom: 20px; right: 20px;">
+                    <img src="data:image/png;base64,{crown_image_base64}" width="50" height="50">
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        elif user_score >= 2000:
+            st.markdown(
+                f"""
+                <div style="position: fixed; bottom: 20px; right: 20px;">
+                    <img src="data:image/png;base64,{cat_image_base64}" width="50" height="50">
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        elif user_score >= 1000:
+            st.markdown(
+                f"""
+                <div style="position: fixed; bottom: 20px; right: 20px;">
+                    <img src="data:image/png;base64,{dog_image_base64}" width="50" height="50">
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
         if st.button("Abmelden"):
             st.session_state['logged_in'] = False
             st.session_state['username'] = ""

@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: black !important;
 }
 .stSidebar {
-    background-color: #2E2E2E !important;
+    background-color: #392981 !important;
 }
 </style>
 """

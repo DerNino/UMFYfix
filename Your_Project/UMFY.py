@@ -177,33 +177,33 @@ except Exception as e:
 
 st.title("Tägliche Umfrage")
 
-# Auswahl zwischen Anmeldung und Registrierung
-st.subheader("Willkommen! Bitte wählen Sie:")
-option = st.selectbox("Option auswählen", ["Anmelden", "Registrieren"])
-
-if option == "Registrieren":
-    st.subheader("Registrierung")
-    reg_username = st.text_input("Benutzername (Registrierung)")
-    reg_password = st.text_input("Passwort (Registrierung)", type="password")
-    if st.button("Registrieren"):
-        if reg_username and reg_password:
-            register_user(reg_username, reg_password)
-        else:
-            st.error("Bitte Benutzername und Passwort eingeben")
-elif option == "Anmelden":
-    st.subheader("Anmeldung")
-    login_username = st.text_input("Benutzername (Anmeldung)")
-    login_password = st.text_input("Passwort (Anmeldung)", type="password")
-    if st.button("Anmelden"):
-        if login_username and login_password:
-            if login_user(login_username, login_password):
-                st.session_state["logged_in"] = True
-                st.session_state["username"] = login_username
-        else:
-            st.error("Bitte Benutzername und Passwort eingeben")
-
 # Nur fortfahren, wenn der Benutzer eingeloggt ist
-if st.session_state.get("logged_in"):
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = False
+
+if not st.session_state['logged_in']:
+    st.subheader("Willkommen! Bitte wählen Sie:")
+    option = st.selectbox("Option auswählen", ["Anmelden", "Registrieren"])
+
+    if option == "Registrieren":
+        st.subheader("Registrierung")
+        reg_username = st.text_input("Benutzername (Registrierung)")
+        reg_password = st.text_input("Passwort (Registrierung)", type="password")
+        if st.button("Registrieren"):
+            if reg_username and reg_password:
+                if register_user(reg_username, reg_password):
+                    st.session_state['logged_in'] = True
+                    st.session_state['username'] = reg_username
+    elif option == "Anmelden":
+        st.subheader("Anmeldung")
+        login_username = st.text_input("Benutzername (Anmeldung)")
+        login_password = st.text_input("Passwort (Anmeldung)", type="password")
+        if st.button("Anmelden"):
+            if login_username and login_password:
+                if login_user(login_username, login_password):
+                    st.session_state["logged_in"] = True
+                    st.session_state["username"] = login_username
+else:
     st.write(f"Eingeloggt als: {st.session_state['username']}")
 
     # Sicherstellen, dass ein neuer Tag in Firebase erstellt wird

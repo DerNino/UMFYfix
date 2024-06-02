@@ -12,7 +12,7 @@ Dieses Dokument fasst die wichtigsten Erkenntnisse und Lernerfahrungen zusammen,
 
 ### Vorteile der Nutzung von Firebase
 - **Echtzeit-Datenbank:** Die Möglichkeit, Daten in Echtzeit zu speichern und abzurufen, hat die Benutzererfahrung erheblich verbessert als es gegklappt hat.
-- **Skalierbarkeit:** Firebase bietet eine skalierbare Lösung, die problemlos mit wachsendem Benutzeraufkommen umgehen kann.
+- **Skalierbarkeit:** Firebase bietet eine skalierbare Lösung, die problemlos mit wachsendem Benutzeraufkommen umgehen könnte.
 
 ### Herausforderungen
 - **Erste Einrichtung:** Die erstmalige Einrichtung und Konfiguration von Firebase war zeitaufwendig und erforderte eine gründliche Einarbeitung.
@@ -21,6 +21,8 @@ Dieses Dokument fasst die wichtigsten Erkenntnisse und Lernerfahrungen zusammen,
 
 ## Weitere Lernpunkte
 
+### Ausschmückung
+- **Design** 
 
 ### Testing und Debugging
 - **Debugging:** Effektive Debugging-Techniken und -Tools, wie ChatGPT, waren unverzichtbar.

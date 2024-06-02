@@ -85,7 +85,7 @@ def img_to_bytes(img):
 def load_questions():
     file_path = os.path.join(os.path.dirname(__file__), "fragen.json")
     try:
-        with open(file_path, 'r') as file):
+        with open(file_path, 'r') as file:
             questions_data = json.load(file)
             if isinstance(questions_data, dict) and "questions" in questions_data:
                 return questions_data["questions"]

@@ -29,9 +29,11 @@ h1, h2, h3, h4, h5, h6 {
     color: white !important;
     background-color: black !important;
 }
-.st-expanderHeader {
+.st-expander {
     background-color: black !important;
-    color: white !important;
+}
+.st-expander div[role="button"] {
+    background-color: black !important;
 }
 </style>
 """
@@ -168,6 +170,7 @@ if st.button("Antwort senden"):
     if user_name and user_response:
         try:
             save_response_and_question(user_name, user_response)
+            st.balloons()  # Ballons anzeigen, wenn eine Antwort erfolgreich gesendet wurde
             st.success("Ihre Antwort wurde gespeichert.")
         except Exception as e:
             st.error(f"Fehler beim Speichern der Antwort: {e}")

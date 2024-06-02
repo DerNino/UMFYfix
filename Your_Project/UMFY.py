@@ -1,36 +1,26 @@
 import streamlit as st
-import pyrebase
-import os
+import datetime
 import json
+import os
 from firebase_admin import credentials, firestore, initialize_app
+from firebase_config import db
 import requests
 from PIL import Image
 from io import BytesIO
 import base64
 import pytz
 
-# Firebase-Admin-SDK initialisieren
-if "firebase_admin_sdk" in st.secrets:
-    cred = credentials.Certificate(json.loads(st.secrets["secrets.toml"]))
-else:
-    cred = credentials.Certificate("firebase_admin_sdk.json")
-initialize_app(cred)
-db = firestore.client()
-
-# Firebase-Konfiguration für pyrebase
-firebase_config = {
-    "apiKey": st.secrets["FIREBASE_API_KEY"],
-    "authDomain": st.secrets["FIREBASE_AUTH_DOMAIN"],
-    "databaseURL": "",
-    "projectId": st.secrets["FIREBASE_PROJECT_ID"],
-    "storageBucket": st.secrets["FIREBASE_STORAGE_BUCKET"],
-    "messagingSenderId": st.secrets["FIREBASE_MESSAGING_SENDER_ID"],
-    "appId": st.secrets["FIREBASE_APP_ID"],
-}
-
 # Firebase initialisieren
-firebase = pyrebase.initialize_app(firebase_config)
-auth_pyrebase = firebase.auth()
+try:
+    cred = credentials.Certificate("firebase_admin_sdk.json")
+    initialize_app(cred)
+    db = firestore.client()
+except FileNotFoundError:
+    st.error("Firebase-Konfigurationsdatei nicht gefunden. Bitte stellen Sie sicher, dass 'firebase_admin_sdk.json' im richtigen Verzeichnis liegt.")
+    st.stop()
+except Exception as e:
+    st.error(f"Fehler bei der Initialisierung von Firebase: {e}")
+    st.stop()
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -52,11 +42,9 @@ h1, h2, h3, h4, h5, h6 {
     color: white !important;
     background-color: black !important;
 }
-.st-expander {
+.st-expanderHeader {
     background-color: black !important;
-}
-.st-expander div[role="button"] {
-    background-color: black !important;
+    color: white !important;
 }
 </style>
 """
@@ -178,29 +166,6 @@ except Exception as e:
 
 st.title("Tägliche Umfrage")
 
-# Login und Registrierung
-st.sidebar.title("Login/Registrierung")
-email = st.sidebar.text_input("Email")
-password = st.sidebar.text_input("Passwort", type="password")
-login_button = st.sidebar.button("Einloggen")
-register_button = st.sidebar.button("Registrieren")
-
-if login_button:
-    try:
-        user = auth_pyrebase.sign_in_with_email_and_password(email, password)
-        st.sidebar.success("Erfolgreich eingeloggt!")
-        st.session_state["user"] = user
-    except Exception as e:
-        st.sidebar.error(f"Fehler beim Einloggen: {e}")
-
-if register_button:
-    try:
-        user = auth_pyrebase.create_user_with_email_and_password(email, password)
-        st.sidebar.success("Erfolgreich registriert!")
-        st.session_state["user"] = user
-    except Exception as e:
-        st.sidebar.error(f"Fehler bei der Registrierung: {e}")
-
 # Sicherstellen, dass ein neuer Tag in Firebase erstellt wird
 create_new_day_entry()
 
@@ -208,25 +173,19 @@ create_new_day_entry()
 question_of_the_day = get_question_of_the_day(datetime.date.today())
 st.write("Frage des Tages:", question_of_the_day)
 
-if "user" in st.session_state:
-    st.write(f"Eingeloggt als: {st.session_state['user']['email']}")
+st.write("Bitte geben Sie Ihren Namen und Ihre Antwort ein:")
+user_name = st.text_input("Ihr Name")
+user_response = st.text_area("Ihre Antwort")
 
-    st.write("Bitte geben Sie Ihren Namen und Ihre Antwort ein:")
-    user_name = st.text_input("Ihr Name")
-    user_response = st.text_area("Ihre Antwort")
-
-    if st.button("Antwort senden"):
-        if user_name and user_response:
-            try:
-                save_response_and_question(user_name, user_response)
-                st.balloons()  # Ballons anzeigen, wenn eine Antwort erfolgreich gesendet wurde
-                st.success("Ihre Antwort wurde gespeichert.")
-            except Exception as e:
-                st.error(f"Fehler beim Speichern der Antwort: {e}")
-        else:
-            st.error("Name und Antwortfeld dürfen nicht leer sein.")
-else:
-    st.write("Bitte melden Sie sich an, um eine Antwort zu senden.")
+if st.button("Antwort senden"):
+    if user_name and user_response:
+        try:
+            save_response_and_question(user_name, user_response)
+            st.success("Ihre Antwort wurde gespeichert.")
+        except Exception as e:
+            st.error(f"Fehler beim Speichern der Antwort: {e}")
+    else:
+        st.error("Name und Antwortfeld dürfen nicht leer sein.")
 
 # Kalender zur Auswahl eines Datums
 selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
@@ -285,4 +244,3 @@ if st.button("Antworten für diesen Tag anzeigen") or st.session_state.get("resp
             st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
     else:
         st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
-

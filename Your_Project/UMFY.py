@@ -257,7 +257,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{crown_image_base64}" width="50" height="50">
+                    <img src="data:image/png;base64,{crown_image_base64}" width="100" height="100">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -266,7 +266,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{cat_image_base64}" width="50" height="50">
+                    <img src="data:image/png;base64,{cat_image_base64}" width="100" height="100">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -275,7 +275,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{dog_image_base64}" width="50" height="50">
+                    <img src="data:image/png;base64,{dog_image_base64}" width="100" height="100">
                 </div>
                 """,
                 unsafe_allow_html=True

@@ -46,10 +46,13 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #4a148c !important;
     color: black !important;
 }
-.stSidebar .css-1lcbmhc {
+.stSidebar div {
     color: black !important;
 }
 .stSidebar .css-1d391kg {
+    color: black !important;
+}
+.stSidebar .css-1lcbmhc {
     color: black !important;
 }
 .stSidebar .css-17eq0hr {

@@ -90,6 +90,18 @@ def get_question_of_the_day(date):
         return questions[question_index]  # Fragen täglich rotieren basierend auf dem Datum
     return "No questions available"
 
+# Funktion, um den Score eines Benutzers zu aktualisieren
+def update_user_score(username, points):
+    user_ref = db.collection('users').document(username)
+    user_doc = user_ref.get()
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+        current_score = user_data.get('score', 0)
+        new_score = current_score + points
+        user_ref.update({'score': new_score})
+    else:
+        st.error("Benutzer nicht gefunden")
+
 # Funktion zum Speichern von Antworten und der Frage in Firebase
 def save_response_and_question(name, response):
     tz = pytz.timezone('Europe/Berlin')  # Europäische Zeitzone
@@ -111,6 +123,8 @@ def save_response_and_question(name, response):
     else:
         doc_ref.set({'question': question_of_the_day, 'responses': [response_data]})
 
+    update_user_score(name, 100)
+
 # Funktion zum Speichern von Kommentaren
 def save_comment(date_str, response_index, name, comment):
     doc_ref = db.collection('responses').document(date_str)
@@ -123,6 +137,7 @@ def save_comment(date_str, response_index, name, comment):
                 responses[response_index]['comments'] = []
             responses[response_index]['comments'].append({"name": name, "comment": comment})
             doc_ref.set(data)
+            update_user_score(name, 50)
             return True
     return False
 
@@ -145,7 +160,7 @@ def register_user(username, password):
         st.sidebar.error("Benutzername bereits vergeben")
         return False
     else:
-        user_ref.set({"password": password})
+        user_ref.set({"password": password, "score": 0})
         st.sidebar.success("Benutzer erfolgreich registriert")
         return True
 
@@ -218,6 +233,11 @@ if not st.session_state['logged_in']:
 else:
     st.write(f"Eingeloggt als: {st.session_state['username']}")
     with st.sidebar:
+        user_ref = db.collection('users').document(st.session_state['username'])
+        user_data = user_ref.get().to_dict()
+        user_score = user_data.get('score', 0)
+        st.write(f"Ihr Score: {user_score}")
+        
         if st.button("Abmelden"):
             st.session_state['logged_in'] = False
             st.session_state['username'] = ""

@@ -14,7 +14,7 @@ page_bg = """
 <style>
 .stApp {
     background: linear-gradient(135deg, #4a148c, #7b1fa2, #8e24aa, #d500f9);
-    color: purple;
+    color: white;
     background-size: 400% 400%;
     animation: gradientAnimation 15s ease infinite;
 }

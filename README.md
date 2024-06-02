@@ -13,3 +13,5 @@ UMFY ist eine benutzerfreundliche App, die es den Nutzern ermöglicht, sich zu r
 Liebe Nutzerinnen und Nutzer, wir freuen uns, euch mitteilen zu können, dass ihr ab sofort in unserer App Kommentare zu den Umfrageantworten hinterlassen könnt! Teilt eure Meinungen, diskutiert unterschiedliche Ansichten und verbindet euch direkt mit der Community. Probiert es gleich aus und bringt die Konversation auf das nächste Level!
 - **Animationen:** 
 Liebe Nutzerinnen und Nutzer, wir haben ein kleines Easter Egg in unserer App versteckt, das ihr beim Antworten auf die Umfragen entdecken könnt. Findet heraus, was es ist, und lasst euch überraschen!
+- **Gamification:** 
+Liebe Nutzerinnen und Nutzer, wir haben ein Punktesystem eingefügt bei welchem Ihr für jede Umfrage 100 Punkte und jeden Kommentar 50 Punkte erhält. Ausserdem gibt es auch Meilensteine für 1'000, 2'000 und 10'000 Punkte. Die Punkte werden in der Sidebar angezeigt und die Belohnungen sind unten rechts zu sehen, wenn erreicht.

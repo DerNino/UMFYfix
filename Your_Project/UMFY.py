@@ -37,19 +37,6 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
-#response-count {
-    position: fixed;
-    top: 50%;
-    right: 10px;
-    background-color: #ffffff;
-    color: #000000;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    transform: translateY(-50%);
-    z-index: 1000;
-    text-align: center;
-}
 </style>
 """
 
@@ -177,24 +164,6 @@ create_new_day_entry()
 question_of_the_day = get_question_of_the_day(datetime.date.today())
 st.write("Frage des Tages:", question_of_the_day)
 
-# Anzahl der bisherigen Antworten für heute
-today_str = datetime.datetime.now(pytz.timezone('Europe/Berlin')).strftime("%Y-%m-%d")
-doc_ref = db.collection('responses').document(today_str)
-doc = doc_ref.get()
-response_count = 0
-if doc.exists:
-    data = doc.to_dict()
-    if 'responses' in data:
-        response_count = len(data['responses'])
-
-# Anzeige der Anzahl der Antworten in einem fixierten Feld
-st.markdown(f"""
-<div id="response-count">
-    <h4>Antworten heute:</h4>
-    <p>{response_count}</p>
-</div>
-""", unsafe_allow_html=True)
-
 st.write("Bitte geben Sie Ihren Namen und Ihre Antwort ein:")
 user_name = st.text_input("Ihr Name")
 user_response = st.text_area("Ihre Antwort")
@@ -205,9 +174,6 @@ if st.button("Antwort senden"):
             save_response_and_question(user_name, user_response)
             st.balloons()  # Ballons anzeigen, wenn eine Antwort erfolgreich gesendet wurde
             st.success("Ihre Antwort wurde gespeichert.")
-            # Update response count
-            response_count += 1
-            st.experimental_rerun()
         except Exception as e:
             st.error(f"Fehler beim Speichern der Antwort: {e}")
     else:

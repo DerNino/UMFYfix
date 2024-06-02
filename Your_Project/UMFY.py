@@ -53,6 +53,18 @@ div[data-testid="stSidebar"] span,
 div[data-testid="stSidebar"] p {
     color: black !important;
 }
+div[data-testid="stSidebar"] .css-1n76uvr {
+    color: black !important;
+}
+div[data-testid="stSidebar"] .css-1lcbmhc {
+    color: black !important;
+}
+div[data-testid="stSidebar"] .css-1q8dd3e {
+    color: black !important;
+}
+div[data-testid="stSidebar"] .css-1v0mbdj {
+    color: black !important;
+}
 </style>
 """
 
@@ -73,7 +85,7 @@ def img_to_bytes(img):
 def load_questions():
     file_path = os.path.join(os.path.dirname(__file__), "fragen.json")
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r') as file):
             questions_data = json.load(file)
             if isinstance(questions_data, dict) and "questions" in questions_data:
                 return questions_data["questions"]
@@ -308,4 +320,3 @@ else:
                 st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
         else:
             st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
-

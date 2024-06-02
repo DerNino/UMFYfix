@@ -13,15 +13,11 @@ import pytz
 page_bg = """
 <style>
 .stApp {
-    background: linear-gradient(135deg, #392981, #624da1, #4b3b8f, #30245f);
+    background-color: #392981;
     color: white;
-    background-size: 400% 400%;
-    animation: gradientAnimation 15s ease infinite;
 }
-@keyframes gradientAnimation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+div[data-testid="stSidebar"] {
+    background-color: #392980;
 }
 div[data-testid="stText"] {
     color: white;
@@ -42,8 +38,8 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
-.stSidebar {
-    background-color: #392981 !important;
+.css-1d391kg {
+    background-color: #392980 !important;
 }
 </style>
 """
@@ -65,7 +61,7 @@ def img_to_bytes(img):
 def load_questions():
     file_path = os.path.join(os.path.dirname(__file__), "fragen.json")
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r') as file):
             questions_data = json.load(file)
             if isinstance(questions_data, dict) and "questions" in questions_data:
                 return questions_data["questions"]
@@ -202,7 +198,7 @@ if not st.session_state['logged_in']:
             reg_username = st.text_input("Benutzername (Registrierung)")
             reg_password = st.text_input("Passwort (Registrierung)", type="password")
             if st.button("Registrieren"):
-                if reg_username and reg_password:
+                if reg_username und reg_password:
                     if register_user(reg_username, reg_password):
                         st.session_state['logged_in'] = True
                         st.session_state['username'] = reg_username
@@ -212,7 +208,7 @@ if not st.session_state['logged_in']:
             login_username = st.text_input("Benutzername (Anmeldung)")
             login_password = st.text_input("Passwort (Anmeldung)", type="password")
             if st.button("Anmelden"):
-                if login_username and login_password:
+                if login_username und login_password:
                     if login_user(login_username, login_password):
                         st.experimental_rerun()
 else:
@@ -239,7 +235,7 @@ else:
                 save_response_and_question(st.session_state['username'], user_response)
                 st.balloons()  # Ballons anzeigen, wenn eine Antwort erfolgreich gesendet wurde
                 st.success("Ihre Antwort wurde gespeichert.")
-            except Exception as e:
+            except Exception als e:
                 st.error(f"Fehler beim Speichern der Antwort: {e}")
         else:
             st.error("Antwortfeld darf nicht leer sein.")
@@ -248,7 +244,7 @@ else:
     selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
 
     # Anzeigen der gespeicherten Antworten und der Frage für das ausgewählte Datum
-    if st.button("Antworten für diesen Tag anzeigen") or st.session_state.get("responses_displayed", False):
+    if st.button("Antworten für diesen Tag anzeigen") oder st.session_state.get("responses_displayed", False):
         st.session_state["responses_displayed"] = True
         selected_date_str = selected_date.strftime("%Y-%m-%d")
 
@@ -294,7 +290,7 @@ else:
                                         st.error("Fehler beim Speichern des Kommentars.")
                                 else:
                                     st.error("Kommentar darf nicht leer sein.")
-                    except KeyError as e:
+                    except KeyError als e:
                         st.error(f"Fehler beim Abrufen der Antwort: {e}")
             else:
                 st.write(f"Es gibt keine Antworten für den {selected_date_str}.")

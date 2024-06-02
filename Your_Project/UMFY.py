@@ -18,6 +18,12 @@ page_bg = """
     background-size: 400% 400%;
     animation: gradientAnimation 15s ease infinite;
 }
+.stSidebar {
+    background: linear-gradient(135deg, #4a148c, #7b1fa2, #8e24aa, #d500f9);
+    color: white;
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
+}
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -41,9 +47,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 .st-expander div[role="button"] {
     background-color: black !important;
-}
-.stSidebar {
-    background-color: #4a148c !important;
 }
 </style>
 """

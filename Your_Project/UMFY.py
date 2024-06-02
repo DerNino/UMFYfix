@@ -212,7 +212,7 @@ if not st.session_state['logged_in']:
             login_username = st.text_input("Benutzername (Anmeldung)")
             login_password = st.text_input("Passwort (Anmeldung)", type="password")
             if st.button("Anmelden"):
-                if login_username und login_password:
+                if login_username and login_password:
                     if login_user(login_username, login_password):
                         st.experimental_rerun()
 else:
@@ -239,7 +239,7 @@ else:
                 save_response_and_question(st.session_state['username'], user_response)
                 st.balloons()  # Ballons anzeigen, wenn eine Antwort erfolgreich gesendet wurde
                 st.success("Ihre Antwort wurde gespeichert.")
-            except Exception als e:
+            except Exception as e:
                 st.error(f"Fehler beim Speichern der Antwort: {e}")
         else:
             st.error("Antwortfeld darf nicht leer sein.")
@@ -248,7 +248,7 @@ else:
     selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
 
     # Anzeigen der gespeicherten Antworten und der Frage für das ausgewählte Datum
-    if st.button("Antworten für diesen Tag anzeigen") oder st.session_state.get("responses_displayed", False):
+    if st.button("Antworten für diesen Tag anzeigen") or st.session_state.get("responses_displayed", False):
         st.session_state["responses_displayed"] = True
         selected_date_str = selected_date.strftime("%Y-%m-%d")
 
@@ -294,7 +294,7 @@ else:
                                         st.error("Fehler beim Speichern des Kommentars.")
                                 else:
                                     st.error("Kommentar darf nicht leer sein.")
-                    except KeyError als e:
+                    except KeyError as e:
                         st.error(f"Fehler beim Abrufen der Antwort: {e}")
             else:
                 st.write(f"Es gibt keine Antworten für den {selected_date_str}.")

@@ -18,12 +18,6 @@ page_bg = """
     background-size: 400% 400%;
     animation: gradientAnimation 15s ease infinite;
 }
-.stSidebar, .css-1d391kg {
-    background: linear-gradient(135deg, #4a148c, #7b1fa2, #8e24aa, #d500f9) !important;
-    color: white !important;
-    background-size: 400% 400% !important;
-    animation: gradientAnimation 15s ease infinite !important;
-}
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -47,6 +41,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 .st-expander div[role="button"] {
     background-color: black !important;
+}
+.css-1d391kg {
+    color: black !important;
+}
+.css-1d391kg .element-container p, .css-1d391kg .element-container {
+    color: black !important;
+}
+.css-1d391kg .element-container input, .css-1d391kg .element-container label {
+    color: black !important;
 }
 </style>
 """
@@ -244,7 +247,7 @@ if not st.session_state['logged_in']:
             login_username = st.text_input("Benutzername (Anmeldung)")
             login_password = st.text_input("Passwort (Anmeldung)", type="password")
             if st.button("Anmelden"):
-                if login_username and login_password:
+                if login_username und login_password:
                     if login_user(login_username, login_password):
                         st.experimental_rerun()
 else:
@@ -260,7 +263,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{crown_image_base64}" width="50" height="50">
+                    <img src="data:image/png;base64,{crown_image_base64}" width="100" height="100">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -269,7 +272,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{cat_image_base64}" width="50" height="50">
+                    <img src="data:image/png;base64,{cat_image_base64}" width="100" height="100">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -278,7 +281,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{dog_image_base64}" width="50" height="50">
+                    <img src="data:image/png;base64,{dog_image_base64}" width="100" height="100">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -360,7 +363,7 @@ else:
                                         st.error("Fehler beim Speichern des Kommentars.")
                                 else:
                                     st.error("Kommentar darf nicht leer sein.")
-                    except KeyError as e:
+                    except KeyError als e:
                         st.error(f"Fehler beim Abrufen der Antwort: {e}")
             else:
                 st.write(f"Es gibt keine Antworten für den {selected_date_str}.")

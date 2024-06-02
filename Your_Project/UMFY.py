@@ -15,6 +15,8 @@ page_bg = """
 .stApp {
     background-color: #392981;
     color: white;
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 75%, transparent);
+    background-size: 20px 20px;
 }
 div[data-testid="stText"] {
     color: white;

@@ -18,6 +18,12 @@ page_bg = """
     background-size: 400% 400%;
     animation: gradientAnimation 15s ease infinite;
 }
+.stSidebar, .css-1d391kg {
+    background: linear-gradient(135deg, #4a148c, #7b1fa2, #8e24aa, #d500f9) !important;
+    color: white !important;
+    background-size: 400% 400% !important;
+    animation: gradientAnimation 15s ease infinite !important;
+}
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -41,22 +47,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 .st-expander div[role="button"] {
     background-color: black !important;
-}
-.stSidebar {
-    background-color: #4a148c !important;
-    color: black !important;
-}
-.stSidebar div {
-    color: black !important;
-}
-.stSidebar .css-1d391kg {
-    color: black !important;
-}
-.stSidebar .css-1lcbmhc {
-    color: black !important;
-}
-.stSidebar .css-17eq0hr {
-    color: black !important;
 }
 </style>
 """
@@ -244,7 +234,7 @@ if not st.session_state['logged_in']:
             reg_username = st.text_input("Benutzername (Registrierung)")
             reg_password = st.text_input("Passwort (Registrierung)", type="password")
             if st.button("Registrieren"):
-                if reg_username and reg_password:
+                if reg_username und reg_password:
                     if register_user(reg_username, reg_password):
                         st.session_state['logged_in'] = True
                         st.session_state['username'] = reg_username
@@ -254,7 +244,7 @@ if not st.session_state['logged_in']:
             login_username = st.text_input("Benutzername (Anmeldung)")
             login_password = st.text_input("Passwort (Anmeldung)", type="password")
             if st.button("Anmelden"):
-                if login_username and login_password:
+                if login_username und login_password:
                     if login_user(login_username, login_password):
                         st.experimental_rerun()
 else:
@@ -270,7 +260,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{crown_image_base64}" width="100" height="100">
+                    <img src="data:image/png;base64,{crown_image_base64}" width="50" height="50">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -279,7 +269,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{cat_image_base64}" width="100" height="100">
+                    <img src="data:image/png;base64,{cat_image_base64}" width="50" height="50">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -288,7 +278,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{dog_image_base64}" width="100" height="100">
+                    <img src="data:image/png;base64,{dog_image_base64}" width="50" height="50">
                 </div>
                 """,
                 unsafe_allow_html=True

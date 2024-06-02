@@ -244,7 +244,7 @@ if not st.session_state['logged_in']:
             login_username = st.text_input("Benutzername (Anmeldung)")
             login_password = st.text_input("Passwort (Anmeldung)", type="password")
             if st.button("Anmelden"):
-                if login_username und login_password:
+                if login_username and login_password:
                     if login_user(login_username, login_password):
                         st.experimental_rerun()
 else:

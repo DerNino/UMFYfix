@@ -13,8 +13,15 @@ import pytz
 page_bg = """
 <style>
 .stApp {
-    background-color: #392981;
+    background: linear-gradient(135deg, #392981, #624da1, #4b3b8f, #30245f);
     color: white;
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
+}
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 div[data-testid="stText"] {
     color: white;
@@ -35,8 +42,8 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
-.css-1d391kg {
-    background-color: #392980 !important;
+.stSidebar {
+    background-color: #392981 !important;
 }
 </style>
 """

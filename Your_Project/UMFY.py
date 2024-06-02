@@ -35,11 +35,6 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
-#logout-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
 </style>
 """
 
@@ -137,11 +132,11 @@ def create_new_day_entry():
 def register_user(username, password):
     user_ref = db.collection('users').document(username)
     if user_ref.get().exists:
-        st.error("Benutzername bereits vergeben")
+        st.sidebar.error("Benutzername bereits vergeben")
         return False
     else:
         user_ref.set({"password": password})
-        st.success("Benutzer erfolgreich registriert")
+        st.sidebar.success("Benutzer erfolgreich registriert")
         return True
 
 # Funktion zum Anmelden eines Benutzers
@@ -153,7 +148,7 @@ def login_user(username, password):
         st.session_state["username"] = username
         return True
     else:
-        st.error("Ungültiger Benutzername oder Passwort")
+        st.sidebar.error("Ungültiger Benutzername oder Passwort")
         return False
 
 # Streamlit App
@@ -188,35 +183,35 @@ if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 
 if not st.session_state['logged_in']:
-    st.subheader("Willkommen! Bitte wählen Sie:")
-    option = st.selectbox("Option auswählen", ["Anmelden", "Registrieren"])
+    with st.sidebar:
+        st.subheader("Willkommen! Bitte wählen Sie:")
+        option = st.selectbox("Option auswählen", ["Anmelden", "Registrieren"])
 
-    if option == "Registrieren":
-        st.subheader("Registrierung")
-        reg_username = st.text_input("Benutzername (Registrierung)")
-        reg_password = st.text_input("Passwort (Registrierung)", type="password")
-        if st.button("Registrieren"):
-            if reg_username and reg_password:
-                if register_user(reg_username, reg_password):
-                    st.session_state['logged_in'] = True
-                    st.session_state['username'] = reg_username
-                    st.experimental_rerun()
-    elif option == "Anmelden":
-        st.subheader("Anmeldung")
-        login_username = st.text_input("Benutzername (Anmeldung)")
-        login_password = st.text_input("Passwort (Anmeldung)", type="password")
-        if st.button("Anmelden"):
-            if login_username and login_password:
-                if login_user(login_username, login_password):
-                    st.experimental_rerun()
+        if option == "Registrieren":
+            st.subheader("Registrierung")
+            reg_username = st.text_input("Benutzername (Registrierung)")
+            reg_password = st.text_input("Passwort (Registrierung)", type="password")
+            if st.button("Registrieren"):
+                if reg_username and reg_password:
+                    if register_user(reg_username, reg_password):
+                        st.session_state['logged_in'] = True
+                        st.session_state['username'] = reg_username
+                        st.experimental_rerun()
+        elif option == "Anmelden":
+            st.subheader("Anmeldung")
+            login_username = st.text_input("Benutzername (Anmeldung)")
+            login_password = st.text_input("Passwort (Anmeldung)", type="password")
+            if st.button("Anmelden"):
+                if login_username and login_password:
+                    if login_user(login_username, login_password):
+                        st.experimental_rerun()
 else:
     st.write(f"Eingeloggt als: {st.session_state['username']}")
-    st.markdown('<div id="logout-button"><form action="#" method="POST"><button name="logout_button">Abmelden</button></form></div>', unsafe_allow_html=True)
-    
-    if 'logout_button' in st.session_state:
-        st.session_state['logged_in'] = False
-        st.session_state['username'] = ""
-        st.experimental_rerun()
+    with st.sidebar:
+        if st.button("Abmelden"):
+            st.session_state['logged_in'] = False
+            st.session_state['username'] = ""
+            st.experimental_rerun()
 
     # Sicherstellen, dass ein neuer Tag in Firebase erstellt wird
     create_new_day_entry()

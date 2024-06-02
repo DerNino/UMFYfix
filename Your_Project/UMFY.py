@@ -39,6 +39,20 @@ div[data-testid="stSidebar"] .stButton > button {
     color: black !important;
     background-color: white !important;
 }
+div[data-testid="stSidebar"] {
+    color: black !important;
+}
+div[data-testid="stSidebar"] h1, 
+div[data-testid="stSidebar"] h2, 
+div[data-testid="stSidebar"] h3, 
+div[data-testid="stSidebar"] h4, 
+div[data-testid="stSidebar"] h5, 
+div[data-testid="stSidebar"] h6, 
+div[data-testid="stSidebar"] label, 
+div[data-testid="stSidebar"] span, 
+div[data-testid="stSidebar"] p {
+    color: black !important;
+}
 </style>
 """
 
@@ -294,3 +308,4 @@ else:
                 st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
         else:
             st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
+

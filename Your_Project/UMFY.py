@@ -13,11 +13,15 @@ import pytz
 page_bg = """
 <style>
 .stApp {
-    background-color: #392981;
+    background: linear-gradient(135deg, #4a148c, #7b1fa2, #8e24aa, #d500f9);
     color: white;
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
 }
-div[data-testid="stSidebar"] {
-    background-color: #392980;
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 div[data-testid="stText"] {
     color: white;
@@ -38,8 +42,8 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
-.css-1d391kg {
-    background-color: #392980 !important;
+.stSidebar {
+    background-color: #4a148c !important;
 }
 </style>
 """
@@ -61,7 +65,7 @@ def img_to_bytes(img):
 def load_questions():
     file_path = os.path.join(os.path.dirname(__file__), "fragen.json")
     try:
-        with open(file_path, 'r') as file):
+        with open(file_path, 'r') as file:
             questions_data = json.load(file)
             if isinstance(questions_data, dict) and "questions" in questions_data:
                 return questions_data["questions"]
@@ -198,7 +202,7 @@ if not st.session_state['logged_in']:
             reg_username = st.text_input("Benutzername (Registrierung)")
             reg_password = st.text_input("Passwort (Registrierung)", type="password")
             if st.button("Registrieren"):
-                if reg_username und reg_password:
+                if reg_username and reg_password:
                     if register_user(reg_username, reg_password):
                         st.session_state['logged_in'] = True
                         st.session_state['username'] = reg_username

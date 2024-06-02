@@ -42,12 +42,13 @@ h1, h2, h3, h4, h5, h6 {
     top: 50%;
     right: 10px;
     background-color: #ffffff;
-    color: #392981;
+    color: #000000;
     padding: 10px;
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     transform: translateY(-50%);
     z-index: 1000;
+    text-align: center;
 }
 </style>
 """
@@ -204,6 +205,9 @@ if st.button("Antwort senden"):
             save_response_and_question(user_name, user_response)
             st.balloons()  # Ballons anzeigen, wenn eine Antwort erfolgreich gesendet wurde
             st.success("Ihre Antwort wurde gespeichert.")
+            # Update response count
+            response_count += 1
+            st.experimental_rerun()
         except Exception as e:
             st.error(f"Fehler beim Speichern der Antwort: {e}")
     else:
@@ -266,4 +270,3 @@ if st.button("Antworten für diesen Tag anzeigen") or st.session_state.get("resp
             st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
     else:
         st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
-

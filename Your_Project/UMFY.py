@@ -11,7 +11,7 @@ import pytz
 
 # Firebase-Admin-SDK initialisieren
 if "firebase_admin_sdk" in st.secrets:
-    cred = credentials.Certificate(json.loads(st.secrets["firebase_admin_sdk"]))
+    cred = credentials.Certificate(json.loads(st.secrets["secrets.toml"]))
 else:
     cred = credentials.Certificate("firebase_admin_sdk.json")
 initialize_app(cred)

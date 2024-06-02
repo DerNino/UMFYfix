@@ -24,7 +24,7 @@ Dieses Dokument fasst die wichtigsten Erkenntnisse und Lernerfahrungen zusammen,
 ### Ausschmückung
 - **Logo-Design:** Das Logo zu designen war sehr witzig und es wurden einige neuen Fähigkeiten in Adobe-Photoshop dazu gelernt.
 - **UI:** Das UI zu gestalten mit den Farbwahlen war ein sehr spannender und belohnender Prozess. 
-- 
+  
 ### Testing und Debugging
 - **Debugging:** Effektive Debugging-Techniken und -Tools, wie ChatGPT, waren unverzichtbar.
 

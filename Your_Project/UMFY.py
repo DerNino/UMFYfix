@@ -234,7 +234,7 @@ if not st.session_state['logged_in']:
             reg_username = st.text_input("Benutzername (Registrierung)")
             reg_password = st.text_input("Passwort (Registrierung)", type="password")
             if st.button("Registrieren"):
-                if reg_username und reg_password:
+                if reg_username and reg_password:
                     if register_user(reg_username, reg_password):
                         st.session_state['logged_in'] = True
                         st.session_state['username'] = reg_username

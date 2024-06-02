@@ -144,7 +144,8 @@ def login_user(username, password):
     user_ref = db.collection('users').document(username)
     user_doc = user_ref.get()
     if user_doc.exists and user_doc.to_dict().get("password") == password:
-        st.success("Erfolgreich eingeloggt")
+        st.session_state["logged_in"] = True
+        st.session_state["username"] = username
         return True
     else:
         st.error("Ungültiger Benutzername oder Passwort")
@@ -194,6 +195,7 @@ if not st.session_state['logged_in']:
                 if register_user(reg_username, reg_password):
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = reg_username
+                    st.experimental_rerun()
     elif option == "Anmelden":
         st.subheader("Anmeldung")
         login_username = st.text_input("Benutzername (Anmeldung)")
@@ -201,10 +203,13 @@ if not st.session_state['logged_in']:
         if st.button("Anmelden"):
             if login_username and login_password:
                 if login_user(login_username, login_password):
-                    st.session_state["logged_in"] = True
-                    st.session_state["username"] = login_username
+                    st.experimental_rerun()
 else:
     st.write(f"Eingeloggt als: {st.session_state['username']}")
+    if st.button("Abmelden"):
+        st.session_state['logged_in'] = False
+        st.session_state['username'] = ""
+        st.experimental_rerun()
 
     # Sicherstellen, dass ein neuer Tag in Firebase erstellt wird
     create_new_day_entry()
@@ -261,23 +266,22 @@ else:
                         # Kommentarformular anzeigen
                         comment_key = f"comment_{selected_date_str}_{idx}"
                         if comment_key not in st.session_state:
-                            st.session_state[comment_key] = {"name": "", "comment": ""}
+                            st.session_state[comment_key] = {"comment": ""}
 
                         with st.expander("Kommentieren", expanded=False):
-                            st.session_state[comment_key]["name"] = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", value=st.session_state[comment_key]["name"], key=f"comment_name_{idx}")
                             st.session_state[comment_key]["comment"] = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", value=st.session_state[comment_key]["comment"], key=f"comment_text_{idx}")
                             if st.button("Veröffentlichen", key=f"comment_button_{idx}"):
-                                comment_name = st.session_state[comment_key]["name"]
+                                comment_name = st.session_state['username']
                                 comment_text = st.session_state[comment_key]["comment"]
-                                if comment_name and comment_text:
+                                if comment_text:
                                     if save_comment(selected_date_str, idx, comment_name, comment_text):
                                         st.success("Ihr Kommentar wurde gespeichert.")
-                                        st.session_state[comment_key] = {"name": "", "comment": ""}
+                                        st.session_state[comment_key] = {"comment": ""}
                                         st.experimental_rerun()  # Seite neu laden, um den Kommentar anzuzeigen
                                     else:
                                         st.error("Fehler beim Speichern des Kommentars.")
                                 else:
-                                    st.error("Name und Kommentar dürfen nicht leer sein.")
+                                    st.error("Kommentar darf nicht leer sein.")
                     except KeyError as e:
                         st.error(f"Fehler beim Abrufen der Antwort: {e}")
             else:

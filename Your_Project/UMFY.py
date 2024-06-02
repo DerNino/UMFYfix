@@ -2,13 +2,12 @@ import streamlit as st
 import datetime
 import json
 import os
-import requests
 from firebase_config import db
+import requests
 from PIL import Image
 from io import BytesIO
 import base64
 import pytz
-from requests.auth import HTTPBasicAuth
 
 # CSS-Styles für den Hintergrund und die Schriftfarbe
 page_bg = """
@@ -129,77 +128,79 @@ def create_new_day_entry():
         question_of_the_day = get_question_of_the_day(today)
         doc_ref.set({'question': question_of_the_day, 'responses': []})
 
-# Überprüfe, ob die benötigten Secrets vorhanden sind
+# Funktion zum Registrieren eines neuen Benutzers
+def register_user(username, password):
+    user_ref = db.collection('users').document(username)
+    if user_ref.get().exists:
+        st.error("Benutzername bereits vergeben")
+        return False
+    else:
+        user_ref.set({"password": password})
+        st.success("Benutzer erfolgreich registriert")
+        return True
+
+# Funktion zum Anmelden eines Benutzers
+def login_user(username, password):
+    user_ref = db.collection('users').document(username)
+    user_doc = user_ref.get()
+    if user_doc.exists and user_doc.to_dict().get("password") == password:
+        st.success("Erfolgreich eingeloggt")
+        return True
+    else:
+        st.error("Ungültiger Benutzername oder Passwort")
+        return False
+
+# Streamlit App
+# Bild von GitHub herunterladen und anzeigen
 try:
-    GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
-    GITHUB_REPO = st.secrets["GITHUB_REPO"]
-    GITHUB_FILE_PATH = st.secrets["GITHUB_FILE_PATH"]
-except KeyError as e:
-    st.error(f"Fehlendes Secret: {e}")
-    st.stop()
+    response = requests.get(logo_url)
+    response.raise_for_status()  # Check if the request was successful
+    img = Image.open(BytesIO(response.content))
+    # Bildgröße auf ein Viertel der ursprünglichen Größe reduzieren
+    width, height = img.size
+    img = img.resize((width // 2, height // 2))
+    # Bild in Base64 umwandeln
+    img_str = img_to_bytes(img)
+    # Bild in der Mitte anzeigen
+    st.markdown(
+        f"""
+        <div style="display: flex; justify-content: center;">
+            <img src="data:image/png;base64,{img_str}" width="{width // 2}" height="{height // 2}">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+except requests.exceptions.RequestException as e:
+    st.error(f"Fehler beim Herunterladen des Bildes: {e}")
+except Exception as e:
+    st.error(f"Fehler beim Laden des Bildes: {e}")
 
-GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
+st.title("Tägliche Umfrage")
 
-def get_credentials():
-    try:
-        response = requests.get(GITHUB_API_URL, headers={
-            "Authorization": f"token {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github.v3+json"
-        })
-        if response.status_code == 200:
-            file_content = response.json()
-            content = file_content['content']
-            decoded_content = base64.b64decode(content).decode('utf-8')
-            return json.loads(decoded_content)
-        else:
-            return {}
-    except Exception as e:
-        st.error(f"Fehler beim Abrufen der Anmeldeinformationen: {e}")
-        return {}
-
-def save_credentials(credentials):
-    try:
-        encoded_content = base64.b64encode(json.dumps(credentials).encode('utf-8')).decode('utf-8')
-        response = requests.put(GITHUB_API_URL, headers={
-            "Authorization": f"token {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github.v3+json"
-        }, json={
-            "message": "Update credentials",
-            "content": encoded_content
-        })
-        if response.status_code == 200:
-            st.success("Anmeldeinformationen erfolgreich gespeichert.")
-        else:
-            st.error("Fehler beim Speichern der Anmeldeinformationen.")
-    except Exception as e:
-        st.error(f"Fehler beim Speichern der Anmeldeinformationen: {e}")
-
-credentials = get_credentials()
-
-st.sidebar.title("Login/Registrierung")
-username = st.sidebar.text_input("Nutzername")
-password = st.sidebar.text_input("Passwort", type="password")
-login_button = st.sidebar.button("Einloggen")
-register_button = st.sidebar.button("Registrieren")
-
-if register_button:
-    if username in credentials:
-        st.sidebar.error("Nutzername existiert bereits.")
+# Registrierung und Anmeldung
+st.subheader("Registrierung")
+reg_username = st.text_input("Benutzername (Registrierung)")
+reg_password = st.text_input("Passwort (Registrierung)", type="password")
+if st.button("Registrieren"):
+    if reg_username and reg_password:
+        register_user(reg_username, reg_password)
     else:
-        credentials[username] = password
-        save_credentials(credentials)
+        st.error("Bitte Benutzername und Passwort eingeben")
 
-if login_button:
-    if username in credentials and credentials[username] == password:
-        st.sidebar.success("Erfolgreich eingeloggt!")
-        st.session_state["user"] = username
+st.subheader("Anmeldung")
+login_username = st.text_input("Benutzername (Anmeldung)")
+login_password = st.text_input("Passwort (Anmeldung)", type="password")
+if st.button("Anmelden"):
+    if login_username and login_password:
+        if login_user(login_username, login_password):
+            st.session_state["logged_in"] = True
+            st.session_state["username"] = login_username
     else:
-        st.sidebar.error("Ungültige Anmeldeinformationen.")
+        st.error("Bitte Benutzername und Passwort eingeben")
 
-if "user" in st.session_state:
-    st.write(f"Eingeloggt als: {st.session_state['user']}")
-
-    st.title("Tägliche Umfrage")
+# Nur fortfahren, wenn der Benutzer eingeloggt ist
+if st.session_state.get("logged_in"):
+    st.write(f"Eingeloggt als: {st.session_state['username']}")
 
     # Sicherstellen, dass ein neuer Tag in Firebase erstellt wird
     create_new_day_entry()
@@ -208,20 +209,19 @@ if "user" in st.session_state:
     question_of_the_day = get_question_of_the_day(datetime.date.today())
     st.write("Frage des Tages:", question_of_the_day)
 
-    st.write("Bitte geben Sie Ihren Namen und Ihre Antwort ein:")
-    user_name = st.text_input("Ihr Name")
+    st.write("Bitte geben Sie Ihre Antwort ein:")
     user_response = st.text_area("Ihre Antwort")
 
     if st.button("Antwort senden"):
-        if user_name and user_response:
+        if user_response:
             try:
-                save_response_and_question(user_name, user_response)
+                save_response_and_question(st.session_state['username'], user_response)
                 st.balloons()  # Ballons anzeigen, wenn eine Antwort erfolgreich gesendet wurde
                 st.success("Ihre Antwort wurde gespeichert.")
             except Exception as e:
                 st.error(f"Fehler beim Speichern der Antwort: {e}")
         else:
-            st.error("Name und Antwortfeld dürfen nicht leer sein.")
+            st.error("Antwortfeld darf nicht leer sein.")
 
     # Kalender zur Auswahl eines Datums
     selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
@@ -230,15 +230,15 @@ if "user" in st.session_state:
     if st.button("Antworten für diesen Tag anzeigen") or st.session_state.get("responses_displayed", False):
         st.session_state["responses_displayed"] = True
         selected_date_str = selected_date.strftime("%Y-%m-%d")
-        
+
         doc_ref = db.collection('responses').document(selected_date_str)
         doc = doc_ref.get()
         if doc.exists:
             data = doc.to_dict()
             question_for_selected_date = data.get('question', 'Keine Frage gefunden')
-            
+
             st.write(f"Frage für den {selected_date_str}: {question_for_selected_date}")
-            
+
             if 'responses' in data:
                 st.write(f"Antworten vom {selected_date_str}:")
                 for idx, response in enumerate(data['responses']):
@@ -246,7 +246,7 @@ if "user" in st.session_state:
                         name = response.get('name', 'Unbekannt')
                         answer = response.get('response', 'Keine Antwort')
                         st.write(f"{idx + 1}. {name}: {answer}")
-                        
+
                         # Kommentare anzeigen
                         comments = response.get('comments', [])
                         if comments:
@@ -258,7 +258,7 @@ if "user" in st.session_state:
                         comment_key = f"comment_{selected_date_str}_{idx}"
                         if comment_key not in st.session_state:
                             st.session_state[comment_key] = {"name": "", "comment": ""}
-                        
+
                         with st.expander("Kommentieren", expanded=False):
                             st.session_state[comment_key]["name"] = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", value=st.session_state[comment_key]["name"], key=f"comment_name_{idx}")
                             st.session_state[comment_key]["comment"] = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", value=st.session_state[comment_key]["comment"], key=f"comment_text_{idx}")
@@ -280,5 +280,3 @@ if "user" in st.session_state:
                 st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
         else:
             st.write(f"Es gibt keine Antworten für den {selected_date_str}.")
-else:
-    st.write("Bitte melden Sie sich an, um eine Antwort zu senden.")

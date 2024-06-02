@@ -29,11 +29,9 @@ h1, h2, h3, h4, h5, h6 {
     color: white !important;
     background-color: black !important;
 }
-.st-expander {
+.st-expanderHeader {
     background-color: black !important;
-}
-.st-expander div[role="button"] {
-    background-color: black !important;
+    color: white !important;
 }
 </style>
 """
@@ -89,7 +87,7 @@ def save_response_and_question(name, response):
     response_data = {"name": name, "response": response, "comments": []}
 
     doc = doc_ref.get()
-    if doc.exists:
+    if doc.exists():
         data = doc.to_dict()
         if 'responses' in data:
             data['responses'].append(response_data)
@@ -105,7 +103,7 @@ def save_response_and_question(name, response):
 def save_comment(date_str, response_index, name, comment):
     doc_ref = db.collection('responses').document(date_str)
     doc = doc_ref.get()
-    if doc.exists:
+    if doc.exists():
         data = doc.to_dict()
         responses = data.get('responses', [])
         if 0 <= response_index < len(responses):
@@ -124,7 +122,7 @@ def create_new_day_entry():
     doc_ref = db.collection('responses').document(today_str)
 
     doc = doc_ref.get()
-    if not doc.exists:
+    if not doc.exists():
         question_of_the_day = get_question_of_the_day(today)
         doc_ref.set({'question': question_of_the_day, 'responses': []})
 
@@ -186,7 +184,7 @@ if st.button("Antworten für diesen Tag anzeigen") or st.session_state.get("resp
     
     doc_ref = db.collection('responses').document(selected_date_str)
     doc = doc_ref.get()
-    if doc.exists:
+    if doc.exists():
         data = doc.to_dict()
         question_for_selected_date = data.get('question', 'Keine Frage gefunden')
         

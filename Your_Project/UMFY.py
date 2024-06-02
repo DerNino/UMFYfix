@@ -18,7 +18,7 @@ page_bg = """
     background-size: 400% 400%;
     animation: gradientAnimation 15s ease infinite;
 }
-.stSidebar {
+.stSidebar, .stSidebarContent {
     background: linear-gradient(135deg, #4a148c, #7b1fa2, #8e24aa, #d500f9);
     color: white;
     background-size: 400% 400%;

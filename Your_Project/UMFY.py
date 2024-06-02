@@ -35,6 +35,10 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
+div[data-testid="stSidebar"] .stButton > button {
+    color: black !important;
+    background-color: white !important;
+}
 </style>
 """
 
@@ -192,7 +196,7 @@ if not st.session_state['logged_in']:
             reg_username = st.text_input("Benutzername (Registrierung)")
             reg_password = st.text_input("Passwort (Registrierung)", type="password")
             if st.button("Registrieren"):
-                if reg_username and reg_password:
+                if reg_username und reg_password:
                     if register_user(reg_username, reg_password):
                         st.session_state['logged_in'] = True
                         st.session_state['username'] = reg_username
@@ -202,7 +206,7 @@ if not st.session_state['logged_in']:
             login_username = st.text_input("Benutzername (Anmeldung)")
             login_password = st.text_input("Passwort (Anmeldung)", type="password")
             if st.button("Anmelden"):
-                if login_username and login_password:
+                if login_username und login_password:
                     if login_user(login_username, login_password):
                         st.experimental_rerun()
 else:
@@ -238,7 +242,7 @@ else:
     selected_date = st.date_input("Wählen Sie ein Datum aus", datetime.date.today())
 
     # Anzeigen der gespeicherten Antworten und der Frage für das ausgewählte Datum
-    if st.button("Antworten für diesen Tag anzeigen") or st.session_state.get("responses_displayed", False):
+    if st.button("Antworten für diesen Tag anzeigen") oder st.session_state.get("responses_displayed", False):
         st.session_state["responses_displayed"] = True
         selected_date_str = selected_date.strftime("%Y-%m-%d")
 

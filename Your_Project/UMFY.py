@@ -35,6 +35,11 @@ h1, h2, h3, h4, h5, h6 {
 .st-expander div[role="button"] {
     background-color: black !important;
 }
+#logout-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
 </style>
 """
 
@@ -206,7 +211,9 @@ if not st.session_state['logged_in']:
                     st.experimental_rerun()
 else:
     st.write(f"Eingeloggt als: {st.session_state['username']}")
-    if st.button("Abmelden"):
+    st.markdown('<div id="logout-button"><form action="#" method="POST"><button name="logout_button">Abmelden</button></form></div>', unsafe_allow_html=True)
+    
+    if 'logout_button' in st.session_state:
         st.session_state['logged_in'] = False
         st.session_state['username'] = ""
         st.experimental_rerun()

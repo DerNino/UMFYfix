@@ -177,26 +177,30 @@ except Exception as e:
 
 st.title("Tägliche Umfrage")
 
-# Registrierung und Anmeldung
-st.subheader("Registrierung")
-reg_username = st.text_input("Benutzername (Registrierung)")
-reg_password = st.text_input("Passwort (Registrierung)", type="password")
-if st.button("Registrieren"):
-    if reg_username and reg_password:
-        register_user(reg_username, reg_password)
-    else:
-        st.error("Bitte Benutzername und Passwort eingeben")
+# Auswahl zwischen Anmeldung und Registrierung
+st.subheader("Willkommen! Bitte wählen Sie:")
+option = st.selectbox("Option auswählen", ["Anmelden", "Registrieren"])
 
-st.subheader("Anmeldung")
-login_username = st.text_input("Benutzername (Anmeldung)")
-login_password = st.text_input("Passwort (Anmeldung)", type="password")
-if st.button("Anmelden"):
-    if login_username and login_password:
-        if login_user(login_username, login_password):
-            st.session_state["logged_in"] = True
-            st.session_state["username"] = login_username
-    else:
-        st.error("Bitte Benutzername und Passwort eingeben")
+if option == "Registrieren":
+    st.subheader("Registrierung")
+    reg_username = st.text_input("Benutzername (Registrierung)")
+    reg_password = st.text_input("Passwort (Registrierung)", type="password")
+    if st.button("Registrieren"):
+        if reg_username and reg_password:
+            register_user(reg_username, reg_password)
+        else:
+            st.error("Bitte Benutzername und Passwort eingeben")
+elif option == "Anmelden":
+    st.subheader("Anmeldung")
+    login_username = st.text_input("Benutzername (Anmeldung)")
+    login_password = st.text_input("Passwort (Anmeldung)", type="password")
+    if st.button("Anmelden"):
+        if login_username and login_password:
+            if login_user(login_username, login_password):
+                st.session_state["logged_in"] = True
+                st.session_state["username"] = login_username
+        else:
+            st.error("Bitte Benutzername und Passwort eingeben")
 
 # Nur fortfahren, wenn der Benutzer eingeloggt ist
 if st.session_state.get("logged_in"):

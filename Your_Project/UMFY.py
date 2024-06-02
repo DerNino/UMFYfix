@@ -199,22 +199,23 @@ if st.button("Antworten für diesen Tag anzeigen"):
                         st.write("Kommentare:")
                         for comment in comments:
                             st.write(f"- {comment['name']}: {comment['comment']}")
-                    
+
                     # Kommentarformular mit einem "Kommentieren"-Button anzeigen
                     if f"show_comment_form_{idx}" not in st.session_state:
                         st.session_state[f"show_comment_form_{idx}"] = False
 
-                    if st.button(f"Kommentieren für Antwort {idx + 1}", key=f"show_comment_button_{idx}"):
+                    if st.button("Kommentieren", key=f"show_comment_button_{idx}"):
                         st.session_state[f"show_comment_form_{idx}"] = not st.session_state[f"show_comment_form_{idx}"]
 
                     if st.session_state[f"show_comment_form_{idx}"]:
                         comment_name = st.text_input(f"Ihr Name (Kommentar) für Antwort {idx + 1}", key=f"comment_name_{idx}")
                         comment_text = st.text_area(f"Ihr Kommentar für Antwort {idx + 1}", key=f"comment_text_{idx}")
-                        if st.button(f"Kommentar senden für Antwort {idx + 1}", key=f"comment_button_{idx}"):
+                        if st.button("Veröffentlichen", key=f"comment_button_{idx}"):
                             if comment_name and comment_text:
                                 if save_comment(selected_date_str, idx, comment_name, comment_text):
                                     st.success("Ihr Kommentar wurde gespeichert.")
                                     st.session_state[f"show_comment_form_{idx}"] = False  # Schließen des Kommentarformulars nach dem Senden
+                                    st.experimental_rerun()  # Seite neu laden, um den Kommentar anzuzeigen
                                 else:
                                     st.error("Fehler beim Speichern des Kommentars.")
                             else:

@@ -45,6 +45,9 @@ h1, h2, h3, h4, h5, h6 {
 .stSidebar {
     background-color: #4a148c !important;
 }
+.stSidebar .css-1d391kg {
+    color: black;
+}
 </style>
 """
 

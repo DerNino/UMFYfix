@@ -2,21 +2,35 @@ import streamlit as st
 import datetime
 import json
 import os
+import toml
 from firebase_admin import credentials, firestore, initialize_app
-from firebase_config import db
 import requests
 from PIL import Image
 from io import BytesIO
 import base64
 import pytz
 
+# Secrets aus der Datei 'secrets.toml' laden
+secrets = toml.load("secrets.toml")
+
 # Firebase initialisieren
 try:
-    cred = credentials.Certificate("firebase_admin_sdk.json")
+    cred = credentials.Certificate({
+        "type": secrets["firebase"]["type"],
+        "project_id": secrets["firebase"]["project_id"],
+        "private_key_id": secrets["firebase"]["private_key_id"],
+        "private_key": secrets["firebase"]["private_key"].replace("\\n", "\n"),
+        "client_email": secrets["firebase"]["client_email"],
+        "client_id": secrets["firebase"]["client_id"],
+        "auth_uri": secrets["firebase"]["auth_uri"],
+        "token_uri": secrets["firebase"]["token_uri"],
+        "auth_provider_x509_cert_url": secrets["firebase"]["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": secrets["firebase"]["client_x509_cert_url"]
+    })
     initialize_app(cred)
     db = firestore.client()
 except FileNotFoundError:
-    st.error("Firebase-Konfigurationsdatei nicht gefunden. Bitte stellen Sie sicher, dass 'firebase_admin_sdk.json' im richtigen Verzeichnis liegt.")
+    st.error("Die 'secrets.toml'-Datei wurde nicht gefunden. Bitte stellen Sie sicher, dass sie im richtigen Verzeichnis liegt.")
     st.stop()
 except Exception as e:
     st.error(f"Fehler bei der Initialisierung von Firebase: {e}")
@@ -110,7 +124,7 @@ def save_response_and_question(name, response):
             data['question'] = question_of_the_day
         doc_ref.set(data)
     else:
-        doc_ref.set({'question': question_of_the_day, 'responses': [response_data]})
+        doc_ref.set({'question': question_of_the-day, 'responses': [response_data]})
 
 # Funktion zum Speichern von Kommentaren
 def save_comment(date_str, response_index, name, comment):
@@ -137,7 +151,7 @@ def create_new_day_entry():
     doc = doc_ref.get()
     if not doc.exists:
         question_of_the_day = get_question_of_the_day(today)
-        doc_ref.set({'question': question_of_the_day, 'responses': []})
+        doc_ref.set({'question': question_of-the-day, 'responses': []})
 
 # Streamlit App
 # Bild von GitHub herunterladen und anzeigen

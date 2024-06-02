@@ -18,6 +18,12 @@ page_bg = """
     background-size: 400% 400%;
     animation: gradientAnimation 15s ease infinite;
 }
+.stSidebar, .css-1lcbmhc {
+    background: linear-gradient(135deg, #4a148c, #7b1fa2, #8e24aa, #d500f9);
+    color: white;
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
+}
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -41,12 +47,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 .st-expander div[role="button"] {
     background-color: black !important;
-}
-.stSidebar {
-    background-color: #4a148c !important;
-}
-.stSidebar .css-1d391kg {
-    color: black;
 }
 </style>
 """
@@ -260,7 +260,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{crown_image_base64}" width="100" height="100">
+                    <img src="data:image/png;base64,{crown_image_base64}" width="50" height="50">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -269,7 +269,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{cat_image_base64}" width="100" height="100">
+                    <img src="data:image/png;base64,{cat_image_base64}" width="50" height="50">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -278,7 +278,7 @@ else:
             st.markdown(
                 f"""
                 <div style="position: fixed; bottom: 20px; right: 20px;">
-                    <img src="data:image/png;base64,{dog_image_base64}" width="100" height="100">
+                    <img src="data:image/png;base64,{dog_image_base64}" width="50" height="50">
                 </div>
                 """,
                 unsafe_allow_html=True
